@@ -6,12 +6,15 @@
 
 [DCGAN](https://arxiv.org/pdf/1511.06434.pdf) which using CNN in GAN has made a huge improvement.
 
+TODO: an online website
+
 ## Relevant reference
 
 - [知乎-GAN学习指南：从原理入门到制作生成Demo](https://zhuanlan.zhihu.com/p/24767059)
 - [GAN video by Li mu](https://www.bilibili.com/video/BV1rb4y187vD)
 - [Github-GAN-tensorflow](https://github.com/YadiraF/GAN)
 - [Github-GAN-pytorch](https://github.com/eriklindernoren/PyTorch-GAN)
+- [Github-DCGAN-tensorflow](https://github.com/carpedm20/DCGAN-tensorflow)
 - [KL散度](https://zhuanlan.zhihu.com/p/365400000)
 
 ## [Knowledge of GAN](GAN.md)
@@ -30,7 +33,9 @@
 
 ![20220506121357](https://raw.githubusercontent.com/learner-lu/picbed/master/20220506121357.png)
 
-download the dataset zip and unzip it as `anime` in the the folder
+download the dataset zip and unzip it under `dataset` as `dataset/anime`
+
+total dataset contains about 50000+ images of 96x96
 
 - [Github-download](https://github.com/luzhixing12345/GAN/releases/download/v0.0.2/faces.zip)
 
@@ -38,13 +43,13 @@ download the dataset zip and unzip it as `anime` in the the folder
 
 ## Use
 
-### Step-1: Train
+### Train
 
 ```bash
 python train.py
 ```
 
-### Step-2: Generate an anime picture
+### Generate an anime picture
 
 ```bash
 python generate.py
@@ -85,3 +90,13 @@ download the pretrained model D and G and move it under `./model`
 ## [Lab report]()
 
 > actually this is my closing report of Data-science-introduction lesson, see more infomation in another [repository](https://github.com/luzhixing12345/data-science-introduction)
+
+## Some questions you may ask and some problems you may encounter
+
+1. How to train with my own dataset?
+
+2. It seems to slow to train each epoch, anything help?
+
+3. The result doesn't seem well...
+
+if you have any other question, leave your confusion in Issue and I will apply as soon as possible.

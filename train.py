@@ -8,17 +8,15 @@
 '''
 
 from config.config import get_cfg
-from utils.basic_utils import project_preprocess
-import logging
-
-
+from utils import *
 
 def main():
     
     cfg = get_cfg()
     cfg = project_preprocess(cfg)
 
-    
+    dataloader = preprare_dataloader(cfg)
+    print(len(dataloader))
     return
 
 
