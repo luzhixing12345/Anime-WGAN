@@ -10,14 +10,18 @@ TODO: an online website
 
 ## Relevant reference
 
+project:
+
+- [Github-GAN+DCGAN+WGAN-pytorch](https://github.com/Zeleni9/pytorch-wgan) (easy to use,recommand)
+- [Github-GAN*-pytorch](https://github.com/eriklindernoren/PyTorch-GAN) (overall)
+- [Github-DCGAN-tensorflow](https://github.com/carpedm20/DCGAN-tensorflow)
+- [Github-GAN*-tensorflow](https://github.com/YadiraF/GAN)
+
+knowledge:
+
 - [知乎-GAN学习指南：从原理入门到制作生成Demo](https://zhuanlan.zhihu.com/p/24767059)
 - [GAN video by Li mu](https://www.bilibili.com/video/BV1rb4y187vD)
-- [Github-GAN-tensorflow](https://github.com/YadiraF/GAN)
-- [Github-GAN-pytorch](https://github.com/eriklindernoren/PyTorch-GAN)
-- [Github-DCGAN-tensorflow](https://github.com/carpedm20/DCGAN-tensorflow)
 - [KL散度](https://zhuanlan.zhihu.com/p/365400000)
-
-## [Knowledge of GAN](GAN.md)
 
 ## Requirements
 

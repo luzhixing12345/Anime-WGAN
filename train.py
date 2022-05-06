@@ -15,8 +15,9 @@ def main():
     cfg = get_cfg()
     cfg = project_preprocess(cfg)
 
-    dataloader = preprare_dataloader(cfg)
-    print(len(dataloader))
+    train_dataloader, test_dataloader = preprare_dataloader(cfg)
+    print("train_dataloader:", len(train_dataloader))
+    print("test_dataloader:", len(test_dataloader))
     return
 
 
