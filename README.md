@@ -2,7 +2,9 @@
 
 ## Inroduction
 
-[Generative adversial nets](https://github.com/luzhixing12345/GAN/releases/download/v0.0.1/NIPS-2014-generative-adversarial-nets-Paper-4w.pdf) was published in 2014 NIPS
+[Generative adversial nets](https://arxiv.org/abs/1406.2661) was published in 2014 NIPS
+
+[DCGAN](https://arxiv.org/pdf/1511.06434.pdf) which using CNN in GAN has made a huge improvement.
 
 ## Relevant reference
 
@@ -10,6 +12,7 @@
 - [GAN video by Li mu](https://www.bilibili.com/video/BV1rb4y187vD)
 - [Github-GAN-tensorflow](https://github.com/YadiraF/GAN)
 - [Github-GAN-pytorch](https://github.com/eriklindernoren/PyTorch-GAN)
+- [KL散度](https://zhuanlan.zhihu.com/p/365400000)
 
 ## [Knowledge of GAN](GAN.md)
 
@@ -32,10 +35,6 @@ download the dataset zip and unzip it as `anime` in the the folder
 - [Github-download](https://github.com/luzhixing12345/GAN/releases/download/v0.0.2/faces.zip)
 
   > try to use [Github proxy](https://ghproxy.com/) if too slow
-
-- [百度网盘](https://pan.baidu.com/s/15VsNYenyQBcGAbptVMdvwQ) password: `8wu7`
-
-  > 我的评价是百度网盘是纯纯的**
 
 ## Use
 

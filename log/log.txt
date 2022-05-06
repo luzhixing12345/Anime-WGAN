@@ -1,0 +1,8 @@
+2022-05-06 14:50:34,815 GAN INFO: Namespace(config_file='config/config.yaml', opts=[])
+2022-05-06 14:50:34,816 GAN INFO: Loaded configuration file config/config.yaml
+2022-05-06 14:50:34,817 GAN INFO: Running with config:
+IMAGE:
+  HEIGHT: 96
+  WIDTH: 96
+OUTPUT_DIR: log
+PROJECT_NAME: GAN
