@@ -10,7 +10,7 @@ def default_argument_parser():
     
     #parser.add_argument()
     
-    parser.add_argument("--config_file", default="config/config.yaml", help="path to config file", type=str)
+    parser.add_argument("--config_file", default="" ,help="path to config file", type=str)
     parser.add_argument("opts", help="Modify config options using the command-line", default=None,
                         nargs=argparse.REMAINDER)
     return parser

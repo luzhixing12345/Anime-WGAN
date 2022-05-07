@@ -7,6 +7,8 @@
 import logging
 import os
 import sys
+from torchvision import transforms
+import torch
 
 
 def setup_logger(name, save_dir, distributed_rank):
@@ -28,3 +30,58 @@ def setup_logger(name, save_dir, distributed_rank):
         logger.addHandler(fh)
 
     return logger
+
+class logger:
+    
+    '''
+    log in pytorch training
+    '''
+    def __init__(self,log_dir,epoch) -> None:
+        
+        self.log_dir = log_dir
+        self.epoch = 'epoch'+str(epoch)
+        os.makedirs(os.path.join(self.log_dir, self.epoch), exist_ok=True)
+        
+        self.d_loss = []
+        self.g_loss = []
+        self.iterations = []
+    
+    def log_losses(self,info, generator_iter):
+        
+        self.d_loss.append(info['d_loss'])
+        self.g_loss.append(info['g_loss'])
+        self.iterations.append(generator_iter)
+        
+    def log_images(self,info, generator_iter):
+        
+        generated_images = info['generated_images']
+        real_images = info['real_images']
+
+        os.makedirs(os.path.join(self.log_dir, self.epoch, str(generator_iter)), exist_ok=True)
+        toPIL = transforms.ToPILImage()
+        
+        index = 0
+        for generated_image, real_image in zip(generated_images, real_images):
+
+            # 反归一化
+            generated_image = torch.tensor(generated_image).mul(0.5).add(0.5)
+            real_image = torch.tensor(real_image).mul(0.5).add(0.5)
+        
+            fake_image = toPIL(generated_image)
+            real_image = toPIL(real_image)
+            fake_image.save(os.path.join(self.log_dir, self.epoch, str(generator_iter), f'fake_image_{index}.png'))
+            real_image.save(os.path.join(self.log_dir, self.epoch, str(generator_iter), f'real_image_{index}.png'))
+            index += 1
+            
+        print('successfully save images')
+        
+    def save(self):
+            
+        with open(os.path.join(self.log_dir, self.epoch, 'd_loss.txt'), 'w') as f:
+            for d_loss in self.d_loss:
+                f.write(str(d_loss) + '\n')
+        with open(os.path.join(self.log_dir, self.epoch, 'g_loss.txt'), 'w') as f:
+            for g_loss in self.g_loss:
+                f.write(str(g_loss) + '\n')
+        
+        print('successfully save losses')

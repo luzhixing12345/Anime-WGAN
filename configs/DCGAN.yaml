@@ -1,0 +1,8 @@
+
+PROJECT_NAME: DCGAN
+
+DATASET:
+  NAME: dataset/anime
+
+MODEL:
+  NAME: DCGAN

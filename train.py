@@ -7,6 +7,7 @@
 *@Github: luzhixing12345
 '''
 
+import time
 from config.config import get_cfg
 from utils import *
 
@@ -16,10 +17,10 @@ def main():
     cfg = project_preprocess(cfg)
 
     train_dataloader, test_dataloader = preprare_dataloader(cfg)
-    print("train_dataloader:", len(train_dataloader))
-    print("test_dataloader:", len(test_dataloader))
-    return
-
+    
+    model = build_model(cfg)
+    model.train(train_dataloader)
+    
 
 if __name__ == '__main__':
     main()

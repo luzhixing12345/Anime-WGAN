@@ -1,8 +1,0 @@
-
-PROJECT_NAME: GAN
-
-DATASET_NAME: dataset
-
-IMAGE:
-  HEIGHT: 96
-  WIDTH: 96

@@ -1,3 +1,4 @@
 
-from .basic_utils import *
+from .utils import *
 from .dataset import *
+from .model import *

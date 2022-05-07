@@ -2,7 +2,7 @@
 
 ## Inroduction
 
-[Generative adversial nets](https://arxiv.org/abs/1406.2661) was published in 2014 NIPS
+[Generative adversial nets](https://arxiv.org/abs/1406.2661) was published in 2014 NIPSd
 
 [DCGAN](https://arxiv.org/pdf/1511.06434.pdf) which using CNN in GAN has made a huge improvement.
 
@@ -35,7 +35,7 @@ knowledge:
 
 ## Dataset(Anime)
 
-![20220506121357](https://raw.githubusercontent.com/learner-lu/picbed/master/20220506121357.png)
+![20220507024303](https://raw.githubusercontent.com/learner-lu/picbed/master/20220507024303.png)![20220507024427](https://raw.githubusercontent.com/learner-lu/picbed/master/20220507024427.png)
 
 download the dataset zip and unzip it under `dataset` as `dataset/anime`
 
@@ -63,10 +63,6 @@ python generate.py
 
 |D-epoch|download|G-epoch|download|
 |:--:|:--:|:--:|:--:|
-|D-100|[download]()|G-100|[download]()|
-|D-200|[download]()|G-200|[download]()|
-|D-300|[download]()|G-300|[download]()|
-|D-400|[download]()|G-400|[download]()|
 |D-500(best)|[download]()|G-500(best)|[download]()|
 
 download the pretrained model D and G and move it under `./model`
@@ -102,5 +98,15 @@ download the pretrained model D and G and move it under `./model`
 2. It seems to slow to train each epoch, anything help?
 
 3. The result doesn't seem well...
+
+## Some errors you may encounter
+
+1. BrokenPipeError: [Errno 32] Broken pipe
+
+   multiple threads in Windows, add `DATALOADER.NUM_WORKERS 0`
+
+   ```bash
+   python train.py --config_file configs/GAN.yaml DATALOADER.NUM_WORKERS 0
+   ```
 
 if you have any other question, leave your confusion in Issue and I will apply as soon as possible.

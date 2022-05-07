@@ -1,0 +1,8 @@
+
+PROJECT_NAME: GAN
+
+DATASET:
+  NAME: dataset/anime
+
+MODEL:
+  NAME: GAN
