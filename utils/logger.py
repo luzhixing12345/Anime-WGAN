@@ -77,11 +77,14 @@ class logger:
         
     def save(self):
             
-        with open(os.path.join(self.log_dir, self.epoch, 'd_loss.txt'), 'w') as f:
+        with open(os.path.join(self.log_dir,'d_loss.txt'),'w') as f:
             for d_loss in self.d_loss:
-                f.write(str(d_loss) + '\n')
-        with open(os.path.join(self.log_dir, self.epoch, 'g_loss.txt'), 'w') as f:
+                f.write(str(d_loss)+'\n')
+        with open(os.path.join(self.log_dir,'g_loss.txt'),'w') as f:
             for g_loss in self.g_loss:
-                f.write(str(g_loss) + '\n')
+                f.write(str(g_loss)+'\n')
+        with open(os.path.join(self.log_dir,'iterations.txt'),'w') as f:
+            for iteration in self.iterations:
+                f.write(str(iteration)+'\n')
         
         print('successfully save losses')

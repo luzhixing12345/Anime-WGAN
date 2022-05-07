@@ -127,12 +127,9 @@ class GAN(nn.Module):
                     }
 
                     self.logger.log_images(info, generator_iter)
-
-
-                if generator_iter % 10000 == 0:
-                    print('Generator iter-{}'.format(generator_iter))
                     self.save_model(epoch, generator_iter)
-            self.logger.save()
+
+        self.logger.save()
 
         self.t_end = time.time()
         print('Time of training-{}'.format((self.t_end - self.t_begin)))
