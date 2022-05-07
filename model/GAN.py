@@ -17,13 +17,13 @@ class GAN(BasicModel):
             nn.LeakyReLU(0.2),
             nn.Linear(256, 512),
             nn.LeakyReLU(0.2),
-            nn.Linear(512, self.output_size),
+            nn.Linear(512, self.input_size),
             nn.LeakyReLU(0.2),
             nn.Tanh())
 
         # Discriminator architecture
         self.D = nn.Sequential(
-            nn.Linear(self.output_size, 512),
+            nn.Linear(self.input_size, 512),
             nn.LeakyReLU(0.2),
             nn.Linear(512, 256),
             nn.LeakyReLU(0.2),

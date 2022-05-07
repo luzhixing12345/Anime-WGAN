@@ -6,34 +6,47 @@ import time
 from torchvision import utils
 from model.BaseModule import BasicModel
 
-# model structure come from https://github.com/Zeleni9/pytorch-wgan
+# basic model structure comes from https://github.com/Zeleni9/pytorch-wgan
 
 class Generator(torch.nn.Module):
     def __init__(self, channels):
         super().__init__()
-        # Filters [1024, 512, 256]
         # Input_dim = 100
         # Output_dim = C (number of channels)
         self.main_module = nn.Sequential(
-            # Z latent vector 100
+            
+            # input is Z which size is (batch size x C x 1 X 1),going into a convolution
+            # by default (32, 100, 1, 1)
+            # project and reshape
             nn.ConvTranspose2d(in_channels=100, out_channels=1024, kernel_size=4, stride=1, padding=0),
             nn.BatchNorm2d(num_features=1024),
             nn.ReLU(True),
 
+            # CONV1
             # State (1024x4x4)
             nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(num_features=512),
             nn.ReLU(True),
 
+            # CONV2
             # State (512x8x8)
             nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(num_features=256),
             nn.ReLU(True),
-
+            
+            # CONV3
             # State (256x16x16)
-            nn.ConvTranspose2d(in_channels=256, out_channels=channels, kernel_size=4, stride=2, padding=1))
-            # output of main module --> Image (Cx32x32)
+            nn.ConvTranspose2d(in_channels=256, out_channels=128, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=128),
+            nn.ReLU(True),
+            
+            # CONV4
+            # State (128x32x32)
+            nn.ConvTranspose2d(in_channels=128, out_channels=channels, kernel_size=4, stride=2, padding=1))
+            # output of main module --> Image (batch size x C x 64 x 64)
+            # default (32, 3, 64, 64)
 
+        # output activation function is Tanh
         self.output = nn.Tanh()
 
     def forward(self, x):
@@ -44,45 +57,48 @@ class Generator(torch.nn.Module):
 class Discriminator(torch.nn.Module):
     def __init__(self, channels):
         super().__init__()
-        # Filters [256, 512, 1024]
-        # Input_dim = channels (Cx64x64)
+        # Input_dim = channels (CxHxW)
         # Output_dim = 1
         self.main_module = nn.Sequential(
-            # Image (Cx32x32)
+            # State (CxHxW)
+            # default (32, 3, 64, 64)
             nn.Conv2d(in_channels=channels, out_channels=256, kernel_size=4, stride=2, padding=1),
             nn.LeakyReLU(0.2, inplace=True),
 
-            # State (256x16x16)
+            # State (256x H/2 x W/2)
             nn.Conv2d(in_channels=256, out_channels=512, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(512),
             nn.LeakyReLU(0.2, inplace=True),
 
-            # State (512x8x8)
+            # State (512x H/4 x W/4)
             nn.Conv2d(in_channels=512, out_channels=1024, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(1024),
+            nn.LeakyReLU(0.2, inplace=True),
+            
+            # State (1024x H/8 x W/8)
+            nn.Conv2d(in_channels=1024, out_channels=2048, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(2048),
             nn.LeakyReLU(0.2, inplace=True))
-            # outptut of main module --> State (1024x4x4)
+            # outptut of main module --> State (2048x H/8 x W/8)
 
         self.output = nn.Sequential(
-            nn.Conv2d(in_channels=1024, out_channels=1, kernel_size=4, stride=1, padding=0),
+            nn.Conv2d(in_channels=2048, out_channels=1, kernel_size=4, stride=1, padding=0),
             # Output 1
             nn.Sigmoid())
+        
+            # output size (1 x (H/16-3) x (W/16-3))
+            # default (32, 1, 1, 1)
 
     def forward(self, x):
         x = self.main_module(x)
         return self.output(x)
 
-    def feature_extraction(self, x):
-        # Use discriminator for feature extraction then flatten to vector of 16384 features
-        x = self.main_module(x)
-        return x.view(-1, 1024*4*4)
 
-class DCGAN_MODEL(BasicModel):
+class DCGAN(BasicModel):
     def __init__(self, cfg):
         super().__init__(cfg)
-        self.G = Generator(cfg.IMAGE.CHANNEL)
-        self.D = Discriminator(cfg.IMAGE.CHANNEL)
-        self.C = cfg.IMAGE.CHANNEL
+        self.G = Generator(self.channels)
+        self.D = Discriminator(self.channels)
 
         # binary cross entropy loss and optimizer
         self.loss = nn.BCELoss()
@@ -106,10 +122,7 @@ class DCGAN_MODEL(BasicModel):
                     break
 
                 z = torch.rand((self.batch_size, 100, 1, 1))
-                real_labels = torch.ones(self.batch_size)
-                fake_labels = torch.zeros(self.batch_size)
-
-
+                
                 images = Variable(images).to(self.device)
                 z = Variable(z).to(self.device)
 
@@ -122,7 +135,7 @@ class DCGAN_MODEL(BasicModel):
                 d_loss_real = self.loss(outputs.flatten(), real_labels)
 
                 # Compute BCE Loss using fake images
-                z = Variable(torch.randn(self.batch_size, 100).to(self.device))
+                z = Variable(torch.randn(self.batch_size, 100, 1, 1)).to(self.device)
                 
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
@@ -154,8 +167,7 @@ class DCGAN_MODEL(BasicModel):
                     print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f" %
                           ((epoch + 1), (i + 1), train_loader.dataset.__len__() // self.batch_size, d_loss.data, g_loss.data))
 
-                    
-                    z = Variable(torch.randn(self.batch_size, 100).to(self.device))
+                    z = Variable(torch.randn(self.batch_size, 100, 1, 1)).to(self.device)
 
                     # log losses and save images
                     info = {

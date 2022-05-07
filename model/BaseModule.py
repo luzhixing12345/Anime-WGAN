@@ -17,12 +17,15 @@ class BasicModel(nn.Module):
     def __init__(self,cfg):
         super(BasicModel, self).__init__()
         self.cfg = cfg
+        # input image
         self.height = cfg.IMAGE.HEIGHT
         self.width = cfg.IMAGE.WIDTH
         self.channels = cfg.IMAGE.CHANNEL
-        self.output_size = self.height * self.width * self.channels
+        self.input_size = self.channels * self.height * self.width
+        # some hyperparameters
         self.epochs = cfg.SOLVER.EPOCHS
         self.batch_size = cfg.DATALOADER.BATCH_SIZE
+        # some default parameters
         self.device = cfg.MODEL.DEVICE
         self.model_checkpoint_dir = os.path.join(cfg.MODEL.CHECKPOINT_DIR, cfg.PROJECT_NAME)
         self.checkpoint_freq = cfg.SOLVER.CHECKPOINT_FREQ
