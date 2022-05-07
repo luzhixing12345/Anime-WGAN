@@ -6,3 +6,5 @@ DATASET:
 
 MODEL:
   NAME: DCGAN
+
+OUTPUT_DIR: "log"

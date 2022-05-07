@@ -23,13 +23,13 @@ _C.MODEL = CN()
 _C.MODEL.NAME = "model_name"
 _C.MODEL.DEVICE = "cuda"
 _C.MODEL.CHECKPOINT_DIR = "checkpoints"
-_C.MODEL.SAVE_FREQ = 1
 
 _C.SOLVER = CN()
 _C.SOLVER.BASE_LR = 0.0002
 _C.SOLVER.WEIGHT_DECAY = 0.00001
 _C.SOLVER.BETAS = (0.5, 0.999)
 _C.SOLVER.EPOCHS = 300
+_C.SOLVER.CHECKPOINT_FREQ = 1000
 
 # ---------------------------------------------------------------------------- #
 # Misc options

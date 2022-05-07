@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-import time as t
 import os
-from itertools import chain
+import time
 from torchvision import utils
+from model.BaseModule import BasicModel
 
 # model structure come from https://github.com/Zeleni9/pytorch-wgan
 
@@ -77,52 +77,30 @@ class Discriminator(torch.nn.Module):
         x = self.main_module(x)
         return x.view(-1, 1024*4*4)
 
-class DCGAN_MODEL(object):
-    def __init__(self, args):
-        print("DCGAN model initalization.")
-        self.G = Generator(args.channels)
-        self.D = Discriminator(args.channels)
-        self.C = args.channels
+class DCGAN_MODEL(BasicModel):
+    def __init__(self, cfg):
+        super().__init__(cfg)
+        self.G = Generator(cfg.IMAGE.CHANNEL)
+        self.D = Discriminator(cfg.IMAGE.CHANNEL)
+        self.C = cfg.IMAGE.CHANNEL
 
         # binary cross entropy loss and optimizer
         self.loss = nn.BCELoss()
 
-        self.cuda = False
-        self.cuda_index = 0
-        # check if cuda is available
-        self.check_cuda(args.cuda)
-
         # Using lower learning rate than suggested by (ADAM authors) lr=0.0002  and Beta_1 = 0.5 instead od 0.9 works better [Radford2015]
-        self.d_optimizer = torch.optim.Adam(self.D.parameters(), lr=0.0002, betas=(0.5, 0.999))
-        self.g_optimizer = torch.optim.Adam(self.G.parameters(), lr=0.0002, betas=(0.5, 0.999))
-
-        self.epochs = args.epochs
-        self.batch_size = args.batch_size
-
-        # Set the logger
-        self.logger = Logger('./logs')
-        self.number_of_images = 10
-
-    # cuda support
-    def check_cuda(self, cuda_flag=False):
-        if cuda_flag:
-            self.cuda = True
-            self.D.cuda(self.cuda_index)
-            self.G.cuda(self.cuda_index)
-            self.loss = nn.BCELoss().cuda(self.cuda_index)
-            print("Cuda enabled flag: ")
-            print(self.cuda)
+        self.d_optimizer = torch.optim.Adam(self.D.parameters(), lr=cfg.SOLVER.BASE_LR, betas=cfg.SOLVER.BETAS)
+        self.g_optimizer = torch.optim.Adam(self.G.parameters(), lr=cfg.SOLVER.BASE_LR, betas=cfg.SOLVER.BETAS)
 
 
     def train(self, train_loader):
-        self.t_begin = t.time()
+        
+        start_time = time.time()
         generator_iter = 0
-        #self.file = open("inception_score_graph.txt", "w")
 
         for epoch in range(self.epochs):
-            self.epoch_start_time = t.time()
-
-            for i, (images, _) in enumerate(train_loader):
+            epoch_start_time = time.time()
+            
+            for i, images in enumerate(train_loader):
                 # Check if round number of batches
                 if i == train_loader.dataset.__len__() // self.batch_size:
                     break
@@ -131,29 +109,24 @@ class DCGAN_MODEL(object):
                 real_labels = torch.ones(self.batch_size)
                 fake_labels = torch.zeros(self.batch_size)
 
-                if self.cuda:
-                    images, z = Variable(images).cuda(self.cuda_index), Variable(z).cuda(self.cuda_index)
-                    real_labels, fake_labels = Variable(real_labels).cuda(self.cuda_index), Variable(fake_labels).cuda(self.cuda_index)
-                else:
-                    images, z = Variable(images), Variable(z)
-                    real_labels, fake_labels = Variable(real_labels), Variable(fake_labels)
 
+                images = Variable(images).to(self.device)
+                z = Variable(z).to(self.device)
+
+                real_labels = Variable(torch.ones(self.batch_size)).to(self.device)
+                fake_labels = Variable(torch.zeros(self.batch_size)).to(self.device)
 
                 # Train discriminator
                 # Compute BCE_Loss using real images
                 outputs = self.D(images)
                 d_loss_real = self.loss(outputs.flatten(), real_labels)
-                real_score = outputs
 
                 # Compute BCE Loss using fake images
-                if self.cuda:
-                    z = Variable(torch.randn(self.batch_size, 100, 1, 1)).cuda(self.cuda_index)
-                else:
-                    z = Variable(torch.randn(self.batch_size, 100, 1, 1))
+                z = Variable(torch.randn(self.batch_size, 100).to(self.device))
+                
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
                 d_loss_fake = self.loss(outputs.flatten(), fake_labels)
-                fake_score = outputs
 
                 # Optimize discriminator
                 d_loss = d_loss_real + d_loss_fake
@@ -163,10 +136,9 @@ class DCGAN_MODEL(object):
 
                 # Train generator
                 # Compute loss with fake images
-                if self.cuda:
-                    z = Variable(torch.randn(self.batch_size, 100, 1, 1)).cuda(self.cuda_index)
-                else:
-                    z = Variable(torch.randn(self.batch_size, 100, 1, 1))
+                
+                z = Variable(torch.randn(self.batch_size, 100, 1, 1)).to(self.device)
+                
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
                 g_loss = self.loss(outputs.flatten(), real_labels)
@@ -178,127 +150,36 @@ class DCGAN_MODEL(object):
                 self.g_optimizer.step()
                 generator_iter += 1
 
-
-                if generator_iter % 1000 == 0:
-                    # Workaround because graphic card memory can't store more than 800+ examples in memory for generating image
-                    # Therefore doing loop and generating 800 examples and stacking into list of samples to get 8000 generated images
-                    # This way Inception score is more correct since there are different generated examples from every class of Inception model
-                    # sample_list = []
-                    # for i in range(10):
-                    #     z = Variable(torch.randn(800, 100, 1, 1)).cuda(self.cuda_index)
-                    #     samples = self.G(z)
-                    #     sample_list.append(samples.data.cpu().numpy())
-                    #
-                    # # Flattening list of lists into one list of numpy arrays
-                    # new_sample_list = list(chain.from_iterable(sample_list))
-                    # print("Calculating Inception Score over 8k generated images")
-                    # # Feeding list of numpy arrays
-                    # inception_score = get_inception_score(new_sample_list, cuda=True, batch_size=32,
-                    #                                       resize=True, splits=10)
-                    print('Epoch-{}'.format(epoch + 1))
-                    self.save_model()
-
-                    if not os.path.exists('training_result_images/'):
-                        os.makedirs('training_result_images/')
-
-                    # Denormalize images and save them in grid 8x8
-                    z = Variable(torch.randn(800, 100, 1, 1)).cuda(self.cuda_index)
-                    samples = self.G(z)
-                    samples = samples.mul(0.5).add(0.5)
-                    samples = samples.data.cpu()[:64]
-                    grid = utils.make_grid(samples)
-                    utils.save_image(grid, 'training_result_images/img_generatori_iter_{}.png'.format(str(generator_iter).zfill(3)))
-
-                    time = t.time() - self.t_begin
-                    #print("Inception score: {}".format(inception_score))
-                    print("Generator iter: {}".format(generator_iter))
-                    print("Time {}".format(time))
-
-                    # Write to file inception_score, gen_iters, time
-                    #output = str(generator_iter) + " " + str(time) + " " + str(inception_score[0]) + "\n"
-                    #self.file.write(output)
-
-
-                if ((i + 1) % 100) == 0:
+                if ((i + 1) % self.checkpoint_freq) == 0:
                     print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f" %
                           ((epoch + 1), (i + 1), train_loader.dataset.__len__() // self.batch_size, d_loss.data, g_loss.data))
 
-                    z = Variable(torch.randn(self.batch_size, 100, 1, 1).cuda(self.cuda_index))
+                    
+                    z = Variable(torch.randn(self.batch_size, 100).to(self.device))
 
-                    # TensorBoard logging
-                    # Log the scalar values
+                    # log losses and save images
                     info = {
                         'd_loss': d_loss.data,
                         'g_loss': g_loss.data
                     }
+                    self.logger.log_losses(info, generator_iter)
 
-                    for tag, value in info.items():
-                        self.logger.scalar_summary(tag, value, generator_iter)
-
-                    # Log values and gradients of the parameters
-                    for tag, value in self.D.named_parameters():
-                        tag = tag.replace('.', '/')
-                        self.logger.histo_summary(tag, self.to_np(value), generator_iter)
-                        self.logger.histo_summary(tag + '/grad', self.to_np(value.grad), generator_iter)
-
-                    # Log the images while training
                     info = {
-                        'real_images': self.real_images(images, self.number_of_images),
-                        'generated_images': self.generate_img(z, self.number_of_images)
+                        'real_images': self.reshape_images(images),
+                        'generated_images': self.reshape_images(self.G(z))
                     }
 
-                    for tag, images in info.items():
-                        self.logger.image_summary(tag, images, generator_iter)
-
-
-        self.t_end = t.time()
-        print('Time of training-{}'.format((self.t_end - self.t_begin)))
-        #self.file.close()
-
+                    self.logger.log_images(info, generator_iter)
+                    self.save_model(epoch, generator_iter)
+                    
+                    
+            end_epoch_time = time.time()
+            print("Epoch time: %.2f" % (end_epoch_time - epoch_start_time))
+        end_time = time.time()
+        print("Total time: %.2f" % (end_time - start_time))
         # Save the trained parameters
-        self.save_model()
-
-    def evaluate(self, test_loader, D_model_path, G_model_path):
-        self.load_model(D_model_path, G_model_path)
-        z = Variable(torch.randn(self.batch_size, 100, 1, 1)).cuda(self.cuda_index)
-        samples = self.G(z)
-        samples = samples.mul(0.5).add(0.5)
-        samples = samples.data.cpu()
-        grid = utils.make_grid(samples)
-        print("Grid of 8x8 images saved to 'dgan_model_image.png'.")
-        utils.save_image(grid, 'dgan_model_image.png')
-
-    def real_images(self, images, number_of_images):
-        if (self.C == 3):
-            return self.to_np(images.view(-1, self.C, 32, 32)[:self.number_of_images])
-        else:
-            return self.to_np(images.view(-1, 32, 32)[:self.number_of_images])
-
-    def generate_img(self, z, number_of_images):
-        samples = self.G(z).data.cpu().numpy()[:number_of_images]
-        generated_images = []
-        for sample in samples:
-            if self.C == 3:
-                generated_images.append(sample.reshape(self.C, 32, 32))
-            else:
-                generated_images.append(sample.reshape(32, 32))
-        return generated_images
-
-    def to_np(self, x):
-        return x.data.cpu().numpy()
-
-    def save_model(self):
-        torch.save(self.G.state_dict(), './generator.pkl')
-        torch.save(self.D.state_dict(), './discriminator.pkl')
-        print('Models save to ./generator.pkl & ./discriminator.pkl ')
-
-    def load_model(self, D_model_filename, G_model_filename):
-        D_model_path = os.path.join(os.getcwd(), D_model_filename)
-        G_model_path = os.path.join(os.getcwd(), G_model_filename)
-        self.D.load_state_dict(torch.load(D_model_path))
-        self.G.load_state_dict(torch.load(G_model_path))
-        print('Generator model loaded from {}.'.format(G_model_path))
-        print('Discriminator model loaded from {}-'.format(D_model_path))
+        self.save_model(epoch, generator_iter)
+        
 
     def generate_latent_walk(self, number):
         if not os.path.exists('interpolated_images/'):

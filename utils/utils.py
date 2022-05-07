@@ -26,7 +26,7 @@ def project_preprocess(cfg):
 
     output_dir = cfg.OUTPUT_DIR
     if output_dir and not os.path.exists(output_dir):
-        os.mkdir(output_dir)
+        os.makedirs(output_dir)
 
     logger = setup_logger(cfg.PROJECT_NAME, output_dir, 0)
     logger.info(args)

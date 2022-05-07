@@ -24,7 +24,7 @@ def setup_logger(name, save_dir, distributed_rank):
     logger.addHandler(ch)
 
     if save_dir:
-        fh = logging.FileHandler(os.path.join(save_dir, "log.txt"), mode='w')
+        fh = logging.FileHandler(os.path.join(save_dir, f"log_{name}.txt"), mode='w')
         fh.setLevel(logging.DEBUG)
         fh.setFormatter(formatter)
         logger.addHandler(fh)
@@ -36,16 +36,16 @@ class logger:
     '''
     log in pytorch training
     '''
-    def __init__(self,log_dir,epoch) -> None:
+    def __init__(self,log_dir) -> None:
         
         self.log_dir = log_dir
-        self.epoch = 'epoch'+str(epoch)
-        os.makedirs(os.path.join(self.log_dir, self.epoch), exist_ok=True)
+        if not os.path.exists(log_dir):
+            os.makedirs(os.path.join(self.log_dir))
         
         self.d_loss = []
         self.g_loss = []
         self.iterations = []
-    
+        
     def log_losses(self,info, generator_iter):
         
         self.d_loss.append(info['d_loss'])
@@ -57,20 +57,24 @@ class logger:
         generated_images = info['generated_images']
         real_images = info['real_images']
 
-        os.makedirs(os.path.join(self.log_dir, self.epoch, str(generator_iter)), exist_ok=True)
+        if not os.path.exists(os.path.join(self.log_dir,'generated_images')):
+            os.makedirs(os.path.join(self.log_dir, str(generator_iter)))
+            
+        # save images
         toPIL = transforms.ToPILImage()
-        
         index = 0
         for generated_image, real_image in zip(generated_images, real_images):
 
-            # 反归一化
+            # inverse normalization
+            # generated_image = generated_image * 0.5 + 0.5
+            # from [-1,1] to [0,1]
             generated_image = torch.tensor(generated_image).mul(0.5).add(0.5)
             real_image = torch.tensor(real_image).mul(0.5).add(0.5)
         
             fake_image = toPIL(generated_image)
             real_image = toPIL(real_image)
-            fake_image.save(os.path.join(self.log_dir, self.epoch, str(generator_iter), f'fake_image_{index}.png'))
-            real_image.save(os.path.join(self.log_dir, self.epoch, str(generator_iter), f'real_image_{index}.png'))
+            fake_image.save(os.path.join(self.log_dir, str(generator_iter), f'fake_image_{index}.png'))
+            real_image.save(os.path.join(self.log_dir, str(generator_iter), f'real_image_{index}.png'))
             index += 1
             
         print('successfully save images')

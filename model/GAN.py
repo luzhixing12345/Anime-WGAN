@@ -3,25 +3,15 @@ import time
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from utils.logger import logger
+from model.BaseModule import BasicModel
 
 # model structure comes from https://github.com/Zeleni9/pytorch-wgan
 
-class GAN(nn.Module):
+class GAN(BasicModel):
     def __init__(self, cfg):
         
-        super(GAN, self).__init__()
+        super(GAN, self).__init__(cfg)
         # Generator architecture
-        
-        self.cfg = cfg
-        self.height = cfg.IMAGE.HEIGHT
-        self.width = cfg.IMAGE.WIDTH
-        self.channels = cfg.IMAGE.CHANNEL
-        self.output_size = self.height * self.width * self.channels
-        self.epochs = cfg.SOLVER.EPOCHS
-        self.batch_size = cfg.DATALOADER.BATCH_SIZE
-        self.device = cfg.MODEL.DEVICE
-        
         self.G = nn.Sequential(
             nn.Linear(100, 256),
             nn.LeakyReLU(0.2),
@@ -45,14 +35,14 @@ class GAN(nn.Module):
         self.d_optimizer = torch.optim.Adam(self.D.parameters(), lr=cfg.SOLVER.BASE_LR, weight_decay=cfg.SOLVER.WEIGHT_DECAY)
         self.g_optimizer = torch.optim.Adam(self.G.parameters(), lr=cfg.SOLVER.BASE_LR, weight_decay=cfg.SOLVER.WEIGHT_DECAY)
 
-        self.model_checkpoint_dir = cfg.MODEL.CHECKPOINT_DIR
 
     def train(self, train_loader):
-        self.t_begin = time.time()
+        
+        start_time = time.time()
         generator_iter = 0
-
+        
         for epoch in range(self.epochs+1):
-            self.logger = logger(self.cfg.OUTPUT_DIR, epoch)
+            epoch_start_time = time.time()
             for i, images in enumerate(train_loader):
                 # Check if round number of batches
                 if i == train_loader.dataset.__len__() // self.batch_size:
@@ -107,11 +97,10 @@ class GAN(nn.Module):
                 generator_iter += 1
 
 
-                if ((i + 1) % 1000) == 0:
+                if ((i + 1) % self.checkpoint_freq) == 0:
                     print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f" %
                           ((epoch + 1), (i + 1), train_loader.dataset.__len__() // self.batch_size, d_loss.data, g_loss.data))
 
-                    
                     z = Variable(torch.randn(self.batch_size, 100).to(self.device))
 
                     # log losses and save images
@@ -128,33 +117,13 @@ class GAN(nn.Module):
 
                     self.logger.log_images(info, generator_iter)
                     self.save_model(epoch, generator_iter)
-
+            epoch_end_time = time.time()
+            print("Epoch time: %.2f" % (epoch_end_time - epoch_start_time))
+            
         self.logger.save()
 
-        self.t_end = time.time()
-        print('Time of training-{}'.format((self.t_end - self.t_begin)))
+        end_time = time.time()
+        print("Total time: %.2f" % (end_time - start_time))
         # Save the trained parameters
         self.save_model(epoch, generator_iter)
         
-    def reshape_images(self,data):
-        
-        number_of_images = self.cfg.IMAGE.NUMBER
-        
-        data = data.cpu().detach().numpy()[:number_of_images]
-        images = []
-        for sample in data:
-            images.append(sample.reshape(self.channels, self.height, self.width))
-        return images
-
-    def save_model(self,epoch,iteration):
-        torch.save(self.G.state_dict(), os.path.join(self.model_checkpoint_dir, 'G_epoch_{}_iter_{}.pth'.format(epoch,iteration)))
-        torch.save(self.D.state_dict(), os.path.join(self.model_checkpoint_dir, 'D_epoch_{}_iter_{}.pth'.format(epoch,iteration)))
-        print('Models save to {}'.format(self.model_checkpoint_dir))
-
-    def load_model(self, D_model_filename, G_model_filename):
-        D_model_path = os.path.join(os.getcwd(), D_model_filename)
-        G_model_path = os.path.join(os.getcwd(), G_model_filename)
-        self.D.load_state_dict(torch.load(D_model_path))
-        self.G.load_state_dict(torch.load(G_model_path))
-        print('Generator model loaded from {}.'.format(G_model_path))
-        print('Discriminator model loaded from {}-'.format(D_model_path))
