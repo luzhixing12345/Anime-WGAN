@@ -9,7 +9,7 @@ from model.BaseModule import BasicModel
 # basic model structure comes from https://github.com/Zeleni9/pytorch-wgan
 
 class Generator(torch.nn.Module):
-    def __init__(self, channels):
+    def __init__(self, channels, dimension = 1024, input_size = 100):
         super().__init__()
         # Input_dim = 100
         # Output_dim = C (number of channels)
@@ -18,31 +18,31 @@ class Generator(torch.nn.Module):
             # input is Z which size is (batch size x C x 1 X 1),going into a convolution
             # by default (32, 100, 1, 1)
             # project and reshape
-            nn.ConvTranspose2d(in_channels=100, out_channels=1024, kernel_size=4, stride=1, padding=0),
-            nn.BatchNorm2d(num_features=1024),
+            nn.ConvTranspose2d(in_channels=input_size, out_channels=dimension, kernel_size=4, stride=1, padding=0),
+            nn.BatchNorm2d(num_features=dimension),
             nn.ReLU(True),
 
             # CONV1
             # State (1024x4x4)
-            nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=512),
+            nn.ConvTranspose2d(in_channels=dimension, out_channels=dimension/2, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=dimension/2),
             nn.ReLU(True),
 
             # CONV2
             # State (512x8x8)
-            nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=256),
+            nn.ConvTranspose2d(in_channels=dimension/2, out_channels=dimension/4, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=dimension/4),
             nn.ReLU(True),
             
             # CONV3
             # State (256x16x16)
-            nn.ConvTranspose2d(in_channels=256, out_channels=128, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=128),
+            nn.ConvTranspose2d(in_channels=dimension/4, out_channels=dimension/8, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=dimension/8),
             nn.ReLU(True),
             
             # CONV4
             # State (128x32x32)
-            nn.ConvTranspose2d(in_channels=128, out_channels=channels, kernel_size=4, stride=2, padding=1))
+            nn.ConvTranspose2d(in_channels=dimension/8, out_channels=channels, kernel_size=4, stride=2, padding=1))
             # output of main module --> Image (batch size x C x 64 x 64)
             # default (32, 3, 64, 64)
 
@@ -55,34 +55,34 @@ class Generator(torch.nn.Module):
 
 
 class Discriminator(torch.nn.Module):
-    def __init__(self, channels):
+    def __init__(self, channels,dimension):
         super().__init__()
         # Input_dim = channels (CxHxW)
         # Output_dim = 1
         self.main_module = nn.Sequential(
             # State (CxHxW)
             # default (32, 3, 64, 64)
-            nn.Conv2d(in_channels=channels, out_channels=256, kernel_size=4, stride=2, padding=1),
+            nn.Conv2d(in_channels=channels, out_channels=dimension, kernel_size=4, stride=2, padding=1),
             nn.LeakyReLU(0.2, inplace=True),
 
             # State (256x H/2 x W/2)
-            nn.Conv2d(in_channels=256, out_channels=512, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(512),
+            nn.Conv2d(in_channels=dimension, out_channels=dimension*2, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(dimension*2),
             nn.LeakyReLU(0.2, inplace=True),
 
             # State (512x H/4 x W/4)
-            nn.Conv2d(in_channels=512, out_channels=1024, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(1024),
+            nn.Conv2d(in_channels=dimension*2, out_channels=dimension*4, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(dimension*4),
             nn.LeakyReLU(0.2, inplace=True),
             
             # State (1024x H/8 x W/8)
-            nn.Conv2d(in_channels=1024, out_channels=2048, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(2048),
+            nn.Conv2d(in_channels=dimension*4, out_channels=dimension*8, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(dimension*8),
             nn.LeakyReLU(0.2, inplace=True))
-            # outptut of main module --> State (2048x H/8 x W/8)
+            # outptut of main module --> State (2048x H/16 x W/16)
 
         self.output = nn.Sequential(
-            nn.Conv2d(in_channels=2048, out_channels=1, kernel_size=4, stride=1, padding=0),
+            nn.Conv2d(in_channels=dimension*8, out_channels=1, kernel_size=4, stride=1, padding=0),
             # Output 1
             nn.Sigmoid())
         
@@ -97,8 +97,8 @@ class Discriminator(torch.nn.Module):
 class DCGAN(BasicModel):
     def __init__(self, cfg):
         super().__init__(cfg)
-        self.G = Generator(self.channels)
-        self.D = Discriminator(self.channels)
+        self.G = Generator(self.channels,self.G_dimension,self.G_input_size)
+        self.D = Discriminator(self.channels,self.D_dimension)
 
         # binary cross entropy loss and optimizer
         self.loss = nn.BCELoss()
@@ -121,7 +121,7 @@ class DCGAN(BasicModel):
                 if i == train_loader.dataset.__len__() // self.batch_size:
                     break
 
-                z = torch.rand((self.batch_size, 100, 1, 1))
+                z = torch.rand((self.batch_size, self.G_input_size, 1, 1))
                 
                 images = Variable(images).to(self.device)
                 z = Variable(z).to(self.device)
@@ -135,7 +135,7 @@ class DCGAN(BasicModel):
                 d_loss_real = self.loss(outputs.flatten(), real_labels)
 
                 # Compute BCE Loss using fake images
-                z = Variable(torch.randn(self.batch_size, 100, 1, 1)).to(self.device)
+                z = Variable(torch.randn(self.batch_size, self.G_input_size, 1, 1)).to(self.device)
                 
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
@@ -150,7 +150,7 @@ class DCGAN(BasicModel):
                 # Train generator
                 # Compute loss with fake images
                 
-                z = Variable(torch.randn(self.batch_size, 100, 1, 1)).to(self.device)
+                z = Variable(torch.randn(self.batch_size, self.G_input_size, 1, 1)).to(self.device)
                 
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
@@ -176,13 +176,22 @@ class DCGAN(BasicModel):
                     }
                     self.logger.log_losses(info, generator_iter)
 
+                    with torch.no_grad():
+                        fake_images = self.G(z)[:self.number_of_images]
+                        real_images = images[:self.number_of_images]
+                        # discriminate real images and fake images
+                        fake_labels = self.D(fake_images).flatten()
+                        real_labels = self.D(images).flatten()
+
                     info = {
-                        'real_images': self.reshape_images(images),
-                        'generated_images': self.reshape_images(self.G(z))
+                        'real_images': real_images.cpu().detach().numpy(),
+                        'fake_images': fake_images.cpu().detach().numpy(),
+                        'real_labels': real_labels.cpu().detach().numpy(),
+                        'fake_labels': fake_labels.cpu().detach().numpy()
                     }
 
-                    self.logger.log_images(info, generator_iter)
-                    self.save_model(epoch, generator_iter)
+                    self.logger.log_images(info, epoch)
+                    self.save_model(epoch)
                     
                     
             end_epoch_time = time.time()
@@ -190,7 +199,7 @@ class DCGAN(BasicModel):
         end_time = time.time()
         print("Total time: %.2f" % (end_time - start_time))
         # Save the trained parameters
-        self.save_model(epoch, generator_iter)
+        self.save_model(epoch)
         
 
     def generate_latent_walk(self, number):

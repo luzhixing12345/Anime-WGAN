@@ -26,6 +26,11 @@ class BasicModel(nn.Module):
         # some hyperparameters
         self.epochs = cfg.SOLVER.EPOCHS
         self.batch_size = cfg.DATALOADER.BATCH_SIZE
+        # discriminator
+        self.D_dimension = cfg.MODEL.D.DIMENSION
+        # generator
+        self.G_dimension = cfg.MODEL.G.DIMENSION # 1024
+        self.G_input_size = cfg.MODEL.G.INPUT_SIZE # 100
         # some default parameters
         self.device = cfg.MODEL.DEVICE
         self.model_checkpoint_dir = os.path.join(cfg.MODEL.CHECKPOINT_DIR, cfg.PROJECT_NAME)
@@ -36,19 +41,10 @@ class BasicModel(nn.Module):
         if not os.path.exists(self.model_checkpoint_dir):
             os.makedirs(self.model_checkpoint_dir)
 
-    def reshape_images(self,data):
-        '''
-        reshape images to (batch_size, channels, height, width)
-        '''
-        data = data.cpu().detach().numpy()[:self.number_of_images]
-        images = []
-        for sample in data:
-            images.append(sample.reshape(self.channels, self.height, self.width))
-        return images
 
-    def save_model(self,epoch,iteration):
-        torch.save(self.G.state_dict(), os.path.join(self.model_checkpoint_dir, '{}_G_epoch_{}_iter_{}.pth'.format(self.cfg.PROJECT_NAME,epoch,iteration)))
-        torch.save(self.D.state_dict(), os.path.join(self.model_checkpoint_dir, '{}_D_epoch_{}_iter_{}.pth'.format(self.cfg.PROJECT_NAME,epoch,iteration)))
+    def save_model(self,epoch):
+        torch.save(self.G.state_dict(), os.path.join(self.model_checkpoint_dir, '{}_G_epoch_{}.pth'.format(self.cfg.PROJECT_NAME,epoch)))
+        torch.save(self.D.state_dict(), os.path.join(self.model_checkpoint_dir, '{}_D_epoch_{}.pth'.format(self.cfg.PROJECT_NAME,epoch)))
         print('Models save to {}'.format(self.model_checkpoint_dir))
 
     def load_model(self):

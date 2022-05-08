@@ -1,5 +1,12 @@
 
+import torch
+import torch.nn as nn
 
-a = [1,2,3,4,5]
-a = a[:5]
-print(a)
+
+model = Generator(channels=3)
+
+a = torch.randn(32, 100, 1, 1)
+
+b = model(a)
+
+print(b.shape)

@@ -46,35 +46,45 @@ class logger:
         self.g_loss = []
         self.iterations = []
         
-    def log_losses(self,info, generator_iter):
+    def log_losses(self,info, epoch):
         
         self.d_loss.append(info['d_loss'])
         self.g_loss.append(info['g_loss'])
-        self.iterations.append(generator_iter)
+        self.iterations.append(epoch)
         
-    def log_images(self,info, generator_iter):
+    def log_images(self,info, epoch):
         
-        generated_images = info['generated_images']
         real_images = info['real_images']
+        fake_images = info['fake_images']
+        real_labels = info['real_labels']
+        fake_labels = info['fake_labels']
 
-        if not os.path.exists(os.path.join(self.log_dir,'generated_images')):
-            os.makedirs(os.path.join(self.log_dir, str(generator_iter)))
+        epoch = 'epoch_'+str(epoch)
+        if not os.path.exists(os.path.join(self.log_dir,epoch)):
+            os.makedirs(os.path.join(self.log_dir, epoch))
             
         # save images
         toPIL = transforms.ToPILImage()
         index = 0
-        for generated_image, real_image in zip(generated_images, real_images):
+        for fake_image, real_image in zip(fake_images, real_images):
 
             # inverse normalization
             # generated_image = generated_image * 0.5 + 0.5
             # from [-1,1] to [0,1]
-            generated_image = torch.tensor(generated_image).mul(0.5).add(0.5)
+            fake_image = torch.tensor(fake_image).mul(0.5).add(0.5)
             real_image = torch.tensor(real_image).mul(0.5).add(0.5)
         
-            fake_image = toPIL(generated_image)
+            fake_image = toPIL(fake_image)
             real_image = toPIL(real_image)
-            fake_image.save(os.path.join(self.log_dir, str(generator_iter), f'fake_image_{index}.png'))
-            real_image.save(os.path.join(self.log_dir, str(generator_iter), f'real_image_{index}.png'))
+            
+            if fake_labels[index]>0.5:
+                fake_image.save(os.path.join(self.log_dir, epoch, f'fake_image_{index}_T.png'))
+            else:
+                fake_image.save(os.path.join(self.log_dir, epoch, f'fake_image_{index}_F.png'))
+            if real_labels[index]>0.5:
+                real_image.save(os.path.join(self.log_dir, epoch, f'real_image_{index}_T.png'))
+            else:
+                real_image.save(os.path.join(self.log_dir, epoch, f'real_image_{index}_F.png'))
             index += 1
             
         print('successfully save images')

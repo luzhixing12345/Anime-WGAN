@@ -24,7 +24,14 @@ _C.MODEL = CN()
 _C.MODEL.NAME = "model_name"
 _C.MODEL.DEVICE = "cuda"
 _C.MODEL.CHECKPOINT_DIR = "checkpoints"
+
+_C.MODEL.D = CN()
+_C.MODEL.D.DIMENSION = 128
 _C.MODEL.D.PATH = ""
+
+_C.MODEL.G = CN()
+_C.MODEL.G.DIMENSION = 1024 # DCGAN paper uses 1024, do not change if nesssary
+_C.MODEL.G.INPUT_SIZE = 100 # DCGAN paper uses 100, do not change if nesssary
 _C.MODEL.G.PATH = ""
 
 _C.SOLVER = CN()
