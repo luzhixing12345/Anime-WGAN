@@ -3,11 +3,11 @@ import time
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from model.BaseModule import BasicModel
+from model.BaseModule import BasicGAN
 
 # model structure comes from https://github.com/Zeleni9/pytorch-wgan
 
-class GAN(BasicModel):
+class GAN(BasicGAN):
     def __init__(self, cfg):
         
         super(GAN, self).__init__(cfg)

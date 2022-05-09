@@ -4,7 +4,7 @@ from torch.autograd import Variable
 import os
 import time
 from torchvision import utils
-from model.BaseModule import BasicModel
+from model.BaseModule import BasicGAN
 
 # basic model structure comes from https://github.com/Zeleni9/pytorch-wgan
 
@@ -24,25 +24,25 @@ class Generator(torch.nn.Module):
 
             # CONV1
             # State (1024x4x4)
-            nn.ConvTranspose2d(in_channels=dimension, out_channels=dimension/2, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=dimension/2),
+            nn.ConvTranspose2d(in_channels=dimension, out_channels=dimension//2, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=dimension//2),
             nn.ReLU(True),
 
             # CONV2
             # State (512x8x8)
-            nn.ConvTranspose2d(in_channels=dimension/2, out_channels=dimension/4, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=dimension/4),
+            nn.ConvTranspose2d(in_channels=dimension//2, out_channels=dimension//4, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=dimension//4),
             nn.ReLU(True),
             
             # CONV3
             # State (256x16x16)
-            nn.ConvTranspose2d(in_channels=dimension/4, out_channels=dimension/8, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=dimension/8),
+            nn.ConvTranspose2d(in_channels=dimension//4, out_channels=dimension//8, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=dimension//8),
             nn.ReLU(True),
             
             # CONV4
             # State (128x32x32)
-            nn.ConvTranspose2d(in_channels=dimension/8, out_channels=channels, kernel_size=4, stride=2, padding=1))
+            nn.ConvTranspose2d(in_channels=dimension//8, out_channels=channels, kernel_size=4, stride=2, padding=1))
             # output of main module --> Image (batch size x C x 64 x 64)
             # default (32, 3, 64, 64)
 
@@ -94,7 +94,7 @@ class Discriminator(torch.nn.Module):
         return self.output(x)
 
 
-class DCGAN(BasicModel):
+class DCGAN(BasicGAN):
     def __init__(self, cfg):
         super().__init__(cfg)
         self.G = Generator(self.channels,self.G_dimension,self.G_input_size)
@@ -117,12 +117,11 @@ class DCGAN(BasicModel):
             epoch_start_time = time.time()
             
             for i, images in enumerate(train_loader):
+                ############################
                 # Check if round number of batches
                 if i == train_loader.dataset.__len__() // self.batch_size:
                     break
-
                 z = torch.rand((self.batch_size, self.G_input_size, 1, 1))
-                
                 images = Variable(images).to(self.device)
                 z = Variable(z).to(self.device)
 

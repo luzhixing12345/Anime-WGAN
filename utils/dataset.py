@@ -8,7 +8,7 @@
 '''
 
 import os
-from torchvision import transforms  
+from torchvision import transforms,datasets
 from torch.utils.data import Dataset,DataLoader,random_split
 from PIL import Image
 
@@ -19,8 +19,14 @@ def preprare_dataloader(cfg):
         transforms.Normalize(mean=cfg.IMAGE.PIXEL_MEAN , std=cfg.IMAGE.PIXEL_STD)
     ])
     
-
-    dataset = GAN_dataset(root=cfg.DATASET.NAME, transform=transform)
+    if cfg.DATASET.NAME == 'MNIST':
+        dataset = datasets.MNIST(root="dataset",transform=transforms.Compose([
+                                                    transforms.Resize(size=(cfg.IMAGE.HEIGHT, cfg.IMAGE.WIDTH)),
+                                                    transforms.ToTensor(),
+                                                    transforms.Normalize(mean=0.5 , std=0.5)
+                                                    ]),download=False,train=True)
+    else:
+        dataset = GAN_dataset(root=cfg.DATASET.NAME, transform=transform)
     
     # split dataset into train and test
     # unsupervise learning only use train dataset, supervised learning use train and test dataset

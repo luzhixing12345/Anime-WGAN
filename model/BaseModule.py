@@ -14,15 +14,14 @@ import os
 from utils.logger import logger
 from torchvision import transforms
 
-class BasicModel(nn.Module):
+class BasicGAN(nn.Module):
     def __init__(self,cfg):
-        super(BasicModel, self).__init__()
+        super(BasicGAN, self).__init__()
         self.cfg = cfg
         # input image
         self.height = cfg.IMAGE.HEIGHT
         self.width = cfg.IMAGE.WIDTH
         self.channels = cfg.IMAGE.CHANNEL
-        self.input_size = self.channels * self.height * self.width
         # some hyperparameters
         self.epochs = cfg.SOLVER.EPOCHS
         self.batch_size = cfg.DATALOADER.BATCH_SIZE

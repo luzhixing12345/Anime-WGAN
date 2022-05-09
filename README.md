@@ -10,8 +10,14 @@ TODO: an online website
 
 ## Requirements
 
-- python : 3
-- pytorch
+- python : 3.7
+- [pytorch](https://pytorch.org/get-started/previous-versions/)
+
+  ```bash
+  # CUDA 10.2
+  conda install pytorch==1.10.1 torchvision==0.11.2 torchaudio==0.10.1 cudatoolkit=10.2 -c pytorch
+  ```
+
 - yacs `pip install yacs`
 
 ## Dataset(Anime)
@@ -64,6 +70,10 @@ download the pretrained model D and G and move it under `./checkpoints`, then ru
 
 ## Result
 
+```txt
+software: 
+```
+
 ## Conclusion
 
 ## Some questions you may ask and some problems you may encounter
@@ -102,3 +112,6 @@ knowledge:
 - [知乎-GAN学习指南：从原理入门到制作生成Demo](https://zhuanlan.zhihu.com/p/24767059)
 - [GAN video by Li mu](https://www.bilibili.com/video/BV1rb4y187vD)
 - [KL散度](https://zhuanlan.zhihu.com/p/365400000)
+- [GAN](https://www.zhihu.com/search?q=GAN&type=content&sort=upvoted_count)
+- [WGAN-DCGAN](https://github.com/martinarjovsky/WassersteinGAN/blob/master/models/dcgan.py)
+- [WGAN-GP](https://github.com/EmilienDupont/wgan-gp)

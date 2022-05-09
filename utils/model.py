@@ -11,12 +11,12 @@ from model import *
 
 def build_model(cfg):
 
-    if cfg.MODEL.NAME == 'GAN':
-        model = GAN(cfg)
-    elif cfg.MODEL.NAME == 'DCGAN':
-        model = DCGAN(cfg)
-    else:
-        raise NotImplementedError
+    total_model = {
+        'GAN': GAN,
+        'DCGAN': DCGAN,
+        'WGAN': WGAN,
+    }
+    model = total_model[cfg.MODEL.NAME](cfg)
 
     if cfg.MODEL.DEVICE == 'cuda':
         model = model.cuda()
