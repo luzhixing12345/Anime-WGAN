@@ -1,16 +1,13 @@
-import torch
-from torch import nn
-from torch.utils.data import DataLoader
-from torchvision import datasets
-from torchvision.transforms import ToTensor
 
-# Download training data from open datasets.
-training_data = datasets.MNIST(
-    root="dataset",
-    train=True,
-    download=False,
-    transform=ToTensor(),
-)
+class a:
+    
+    def __init__(self):
+        self.x = 1
+        
+    def __getitem__(self, key):
+        return self.x + key
+    
+a.__getitem__ = lambda self,key: self.x+key*10
+s = a()
 
-a = DataLoader(training_data, batch_size=32, shuffle=True)
-print(len(a))
+print(s[2])

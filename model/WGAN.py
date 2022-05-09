@@ -183,7 +183,7 @@ class WGAN(BasicGAN):
                     'd_loss': d_loss.data,
                     'g_loss': g_loss.data
                 }
-                self.logger.log_losses(info, g_iter)
+                self.logger.log_losses(info, g_iter+1)
 
                 with torch.no_grad():
                     fake_images = self.G(z)[:self.number_of_images]
@@ -199,7 +199,7 @@ class WGAN(BasicGAN):
                     'fake_labels': fake_labels.cpu().detach().numpy()
                 }
 
-                self.logger.log_images(info, g_iter)
+                self.logger.log_images(info, g_iter+1)
                 self.save_model(g_iter)
                     
                     

@@ -19,12 +19,15 @@ def preprare_dataloader(cfg):
         transforms.Normalize(mean=cfg.IMAGE.PIXEL_MEAN , std=cfg.IMAGE.PIXEL_STD)
     ])
     
+    # load pytorch dataset
     if cfg.DATASET.NAME == 'MNIST':
+        # overload the __getitem__ method: only return the image
+        datasets.MNIST.__getitem__ = lambda self, index: self.transform(Image.fromarray(self.data[index].numpy(), mode='L'))
         dataset = datasets.MNIST(root="dataset",transform=transforms.Compose([
                                                     transforms.Resize(size=(cfg.IMAGE.HEIGHT, cfg.IMAGE.WIDTH)),
                                                     transforms.ToTensor(),
                                                     transforms.Normalize(mean=0.5 , std=0.5)
-                                                    ]),download=False,train=True)
+                                                    ]))
     else:
         dataset = GAN_dataset(root=cfg.DATASET.NAME, transform=transform)
     

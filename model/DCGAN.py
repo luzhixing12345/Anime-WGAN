@@ -127,7 +127,6 @@ class DCGAN(BasicGAN):
 
                 real_labels = Variable(torch.ones(self.batch_size)).to(self.device)
                 fake_labels = Variable(torch.zeros(self.batch_size)).to(self.device)
-
                 # Train discriminator
                 # Compute BCE_Loss using real images
                 outputs = self.D(images)
@@ -195,6 +194,7 @@ class DCGAN(BasicGAN):
                     
             end_epoch_time = time.time()
             print("Epoch time: %.2f" % (end_epoch_time - epoch_start_time))
+            self.record_fake_images()
         end_time = time.time()
         print("Total time: %.2f" % (end_time - start_time))
         # Save the trained parameters
@@ -229,3 +229,5 @@ class DCGAN(BasicGAN):
         grid = utils.make_grid(images, nrow=number_int )
         utils.save_image(grid, 'interpolated_images/interpolated_{}.png'.format(str(number).zfill(3)))
         print("Saved interpolated images to interpolated_images/interpolated_{}.".format(str(number).zfill(3)))
+        
+    

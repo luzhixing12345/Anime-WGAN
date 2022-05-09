@@ -18,6 +18,8 @@ _C.IMAGE.CHANNEL = 3
 _C.IMAGE.PIXEL_MEAN = (0.5, 0.5, 0.5)
 _C.IMAGE.PIXEL_STD = (0.5, 0.5, 0.5)
 _C.IMAGE.NUMBER = 10 # number of images to be recorded
+_C.IMAGE.GIF_NUMBER = 64
+_C.IMAGE.GIF_ROW_NUMBER = 8
 _C.IMAGE.SAVE_PATH = "./images" # path to save images while running generate.py
 
 _C.MODEL = CN()
