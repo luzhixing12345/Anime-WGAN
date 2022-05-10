@@ -141,3 +141,4 @@ knowledge:
 - https://github.com/jayleicn/animeGAN
 - [Generative adversial nets](https://arxiv.org/abs/1406.2661) was published in 2014 NIPSd
 - [DCGAN](https://arxiv.org/pdf/1511.06434.pdf) which using CNN in GAN has made a huge improvement.
+- https://github.com/nagadomi/lbpcascade_animeface

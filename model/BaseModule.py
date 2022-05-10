@@ -63,6 +63,7 @@ class BasicGAN(nn.Module):
         if inception_score > self.max_inception_score:
             self.max_inception_score = inception_score
             self.best_model_path = os.path.join(self.model_checkpoint_dir, f'{self.cfg.PROJECT_NAME}_D_epoch_{epoch}.pth')
+            print("New best model! Saving to {}".format(self.best_model_path))
         
         torch.save(self.G.state_dict(), os.path.join(self.model_checkpoint_dir, '{}_G_epoch_{}.pth'.format(self.cfg.PROJECT_NAME,epoch)))
         torch.save(self.D.state_dict(), os.path.join(self.model_checkpoint_dir, '{}_D_epoch_{}.pth'.format(self.cfg.PROJECT_NAME,epoch)))
