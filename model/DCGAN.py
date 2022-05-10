@@ -121,9 +121,8 @@ class DCGAN(BasicGAN):
                 # Check if round number of batches
                 if i == train_loader.dataset.__len__() // self.batch_size:
                     break
-                z = torch.rand((self.batch_size, self.G_input_size, 1, 1))
-                images = Variable(images).to(self.device)
-                z = Variable(z).to(self.device)
+                z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
+                images = images.to(self.device)
 
                 real_labels = Variable(torch.ones(self.batch_size)).to(self.device)
                 fake_labels = Variable(torch.zeros(self.batch_size)).to(self.device)
@@ -133,7 +132,7 @@ class DCGAN(BasicGAN):
                 d_loss_real = self.loss(outputs.flatten(), real_labels)
 
                 # Compute BCE Loss using fake images
-                z = Variable(torch.randn(self.batch_size, self.G_input_size, 1, 1)).to(self.device)
+                z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
                 
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
@@ -148,7 +147,7 @@ class DCGAN(BasicGAN):
                 # Train generator
                 # Compute loss with fake images
                 
-                z = Variable(torch.randn(self.batch_size, self.G_input_size, 1, 1)).to(self.device)
+                z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
                 
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
@@ -165,7 +164,7 @@ class DCGAN(BasicGAN):
                     print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f" %
                           ((epoch + 1), (i + 1), train_loader.dataset.__len__() // self.batch_size, d_loss.data, g_loss.data))
 
-                    z = Variable(torch.randn(self.batch_size, 100, 1, 1)).to(self.device)
+                    z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
 
                     # log losses and save images
                     info = {

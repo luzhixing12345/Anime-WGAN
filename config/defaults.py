@@ -18,8 +18,8 @@ _C.IMAGE.CHANNEL = 3
 _C.IMAGE.PIXEL_MEAN = (0.5, 0.5, 0.5)
 _C.IMAGE.PIXEL_STD = (0.5, 0.5, 0.5)
 _C.IMAGE.NUMBER = 10 # number of images to be recorded
-_C.IMAGE.GIF_NUMBER = 64
-_C.IMAGE.GIF_ROW_NUMBER = 8
+_C.IMAGE.SAVE_NUMBER = 64 # number to save images
+_C.IMAGE.SAVE_ROW_NUMBER = 8 # row to save images
 _C.IMAGE.SAVE_PATH = "./images" # path to save images while running generate.py
 
 _C.MODEL = CN()
@@ -49,7 +49,8 @@ _C.SOLVER.WEIGHT_DECAY = 0.00001
 _C.SOLVER.BETAS = (0.9, 0.999)
 _C.SOLVER.EPOCHS = 300
 _C.SOLVER.CHECKPOINT_FREQ = 1000
-
+_C.SOLVER.EVALUATE_ITERATION = 125
+_C.SOLVER.EVALUATE_BATCH = 128
 # ---------------------------------------------------------------------------- #
 # Misc options
 # ---------------------------------------------------------------------------- #

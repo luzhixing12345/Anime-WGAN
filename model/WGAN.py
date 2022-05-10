@@ -2,11 +2,8 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import time
-import os
-from torchvision import utils
 from model.BaseModule import BasicGAN
 
-SAVE_PER_TIMES = 1000
 
 class Generator(torch.nn.Module):
     def __init__(self, channels, dimension = 1024, input_size = 100):
@@ -131,9 +128,9 @@ class WGAN(BasicGAN):
                 if (images.size()[0] != self.batch_size):
                     continue
 
-                z = torch.rand((self.batch_size, self.G_input_size, 1, 1)).to(self.device)
+                z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
                 images = images.to(self.device)
-                
+                images = Variable(images)
                 # Train discriminator
                 # WGAN - Training discriminator more iterations than generator
                 # Train with real images
@@ -141,7 +138,7 @@ class WGAN(BasicGAN):
                 d_loss_real = d_loss_real.mean()
 
                 # Train with fake images
-                z = torch.randn(self.batch_size, self.G_input_size, 1, 1).to(self.device)
+                z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
                 fake_images = self.G(z)
                 d_loss_fake = self.D(fake_images)
                 d_loss_fake = d_loss_fake.mean()
@@ -165,18 +162,18 @@ class WGAN(BasicGAN):
 
             # Train generator
             # Compute loss with fake images
-            z = torch.randn(self.batch_size, self.G_input_size, 1, 1).to(self.device)
+            z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
+            
             fake_images = self.G(z)
             g_loss = self.D(fake_images)
             g_loss = g_loss.mean().mean(0).view(1)
             g_loss.backward(mone)
             g_cost = -g_loss
             self.g_optimizer.step()
-            # print(f'Generator iteration: {g_iter}/{self.generator_iters}, g_loss: {g_loss.data}')
 
             if ((g_iter + 1) % self.checkpoint_freq) == 0:
-
-                z = Variable(torch.randn(self.batch_size, self.G_input_size, 1, 1)).to(self.device)
+                print(f'Generator iteration: {g_iter}/{self.generator_iters}, g_loss: {g_loss.data.item()}')
+                z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
 
                 # log losses and save images
                 info = {
@@ -201,12 +198,13 @@ class WGAN(BasicGAN):
 
                 self.logger.log_images(info, g_iter+1)
                 self.save_model(g_iter)
-                    
+                self.record_fake_images()
                     
         end_time = time.time()
         print("Total time: %.2f" % (end_time - start_time))
         # Save the trained parameters
         self.save_model(g_iter)
+        self.logger.save()
 
     def get_infinite_batches(self, data_loader):
         while True:

@@ -7,28 +7,97 @@ from model.BaseModule import BasicGAN
 
 # model structure comes from https://github.com/Zeleni9/pytorch-wgan
 
+class Generator(torch.nn.Module):
+    def __init__(self, channels, dimension = 1024, input_size = 100):
+        super().__init__()
+        # Input_dim = 100
+        # Output_dim = C (number of channels)
+        self.main_module = nn.Sequential(
+            
+            # input is Z which size is (batch size x C x 1 X 1),going into a convolution
+            # by default (32, 100, 1, 1)
+            # project and reshape
+            nn.ConvTranspose2d(in_channels=input_size, out_channels=dimension, kernel_size=4, stride=1, padding=0),
+            nn.ReLU(True),
+
+            # CONV1
+            # State (1024x4x4)
+            nn.ConvTranspose2d(in_channels=dimension, out_channels=dimension//2, kernel_size=4, stride=2, padding=1),
+            nn.ReLU(True),
+
+            # CONV2
+            # State (512x8x8)
+            nn.ConvTranspose2d(in_channels=dimension//2, out_channels=dimension//4, kernel_size=4, stride=2, padding=1),
+            nn.ReLU(True),
+            
+            # CONV3
+            # State (256x16x16)
+            nn.ConvTranspose2d(in_channels=dimension//4, out_channels=dimension//8, kernel_size=4, stride=2, padding=1),
+            nn.ReLU(True),
+            
+            # CONV4
+            # State (128x32x32)
+            nn.ConvTranspose2d(in_channels=dimension//8, out_channels=channels, kernel_size=4, stride=2, padding=1))
+            # output of main module --> Image (batch size x C x 64 x 64)
+            # default (32, 3, 64, 64)
+
+        # output activation function is Tanh
+        self.output = nn.Tanh()
+
+    def forward(self, x):
+        x = self.main_module(x)
+        return self.output(x)
+
+
+class Discriminator(torch.nn.Module):
+    def __init__(self, channels,dimension):
+        super().__init__()
+        # Input_dim = channels (CxHxW)
+        # Output_dim = 1
+        self.main_module = nn.Sequential(
+            # State (CxHxW)
+            # default (32, 3, 64, 64)
+            nn.Conv2d(in_channels=channels, out_channels=dimension, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(dimension),
+            nn.ReLU(),
+
+            # State (256x H/2 x W/2)
+            nn.Conv2d(in_channels=dimension, out_channels=dimension*2, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(dimension*2),
+            nn.ReLU(),
+
+            # State (512x H/4 x W/4)
+            nn.Conv2d(in_channels=dimension*2, out_channels=dimension*4, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(dimension*4),
+            nn.ReLU(),
+            
+            # State (1024x H/8 x W/8)
+            nn.Conv2d(in_channels=dimension*4, out_channels=dimension*8, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(dimension*8),
+            nn.ReLU())
+            # outptut of main module --> State (2048x H/16 x W/16)
+
+        self.output = nn.Sequential(
+            nn.Conv2d(in_channels=dimension*8, out_channels=1, kernel_size=4, stride=1, padding=0),
+            # Output 1
+            nn.Sigmoid())
+        
+            # output size (1 x (H/16-3) x (W/16-3))
+            # default (32, 1, 1, 1)
+
+    def forward(self, x):
+        x = self.main_module(x)
+        return self.output(x)
+
+
+
 class GAN(BasicGAN):
     def __init__(self, cfg):
         
         super(GAN, self).__init__(cfg)
-        # Generator architecture
-        self.G = nn.Sequential(
-            nn.Linear(100, 256),
-            nn.LeakyReLU(0.2),
-            nn.Linear(256, 512),
-            nn.LeakyReLU(0.2),
-            nn.Linear(512, self.input_size),
-            nn.LeakyReLU(0.2),
-            nn.Tanh())
-
-        # Discriminator architecture
-        self.D = nn.Sequential(
-            nn.Linear(self.input_size, 512),
-            nn.LeakyReLU(0.2),
-            nn.Linear(512, 256),
-            nn.LeakyReLU(0.2),
-            nn.Linear(256, 1),
-            nn.Sigmoid())
+        # Generator and Discriminator architecture
+        self.G = Generator(self.channels,self.G_dimension,self.G_input_size)
+        self.D = Discriminator(self.channels,self.D_dimension)
 
         # Binary cross entropy loss and optimizer
         self.loss = nn.BCELoss()
@@ -47,12 +116,9 @@ class GAN(BasicGAN):
                 # Check if round number of batches
                 if i == train_loader.dataset.__len__() // self.batch_size:
                     break
-
-                # Flatten image
-                images = images.view(self.batch_size, -1)
                 
                 # initialize random noise
-                z = torch.rand((self.batch_size, 100))
+                z = torch.rand((self.batch_size, self.G_input_size,1,1))
                 
                 real_labels = Variable(torch.ones(self.batch_size)).to(self.device)
                 fake_labels = Variable(torch.zeros(self.batch_size)).to(self.device)
@@ -79,7 +145,7 @@ class GAN(BasicGAN):
 
                 # Train generator
                 
-                z = Variable(torch.randn(self.batch_size, 100).to(self.device))
+                z = Variable(torch.randn(self.batch_size, self.G_input_size).to(self.device))
                 
                 fake_images = self.G(z)
                 outputs = self.D(fake_images)
@@ -101,7 +167,7 @@ class GAN(BasicGAN):
                     print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f" %
                           ((epoch + 1), (i + 1), train_loader.dataset.__len__() // self.batch_size, d_loss.data, g_loss.data))
 
-                    z = Variable(torch.randn(self.batch_size, 100).to(self.device))
+                    z = Variable(torch.randn(self.batch_size, 100, 1, 1)).to(self.device)
 
                     # log losses and save images
                     info = {
@@ -110,20 +176,28 @@ class GAN(BasicGAN):
                     }
                     self.logger.log_losses(info, generator_iter)
 
+                    with torch.no_grad():
+                        fake_images = self.G(z)[:self.number_of_images]
+                        real_images = images[:self.number_of_images]
+                        # discriminate real images and fake images
+                        fake_labels = self.D(fake_images).flatten()
+                        real_labels = self.D(images).flatten()
+
                     info = {
-                        'real_images': self.reshape_images(images),
-                        'generated_images': self.reshape_images(self.G(z))
+                        'real_images': real_images.cpu().detach().numpy(),
+                        'fake_images': fake_images.cpu().detach().numpy(),
+                        'real_labels': real_labels.cpu().detach().numpy(),
+                        'fake_labels': fake_labels.cpu().detach().numpy()
                     }
 
-                    self.logger.log_images(info, generator_iter)
-                    self.save_model(epoch, generator_iter)
-            epoch_end_time = time.time()
-            print("Epoch time: %.2f" % (epoch_end_time - epoch_start_time))
-            
-        self.logger.save()
-
+                    self.logger.log_images(info, epoch)
+                    self.save_model(epoch)
+                    
+                    
+            end_epoch_time = time.time()
+            print("Epoch time: %.2f" % (end_epoch_time - epoch_start_time))
+            self.record_fake_images()
         end_time = time.time()
         print("Total time: %.2f" % (end_time - start_time))
         # Save the trained parameters
-        self.save_model(epoch, generator_iter)
-        
+        self.save_model(epoch)

@@ -20,7 +20,8 @@ def main():
     model = build_model(cfg)
     model.train(train_dataloader)
     model.save_gif()
-    
+    model.save_best_model()
+    print('\nDone!')
 
 if __name__ == '__main__':
     main()
