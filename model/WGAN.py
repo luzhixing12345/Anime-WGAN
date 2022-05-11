@@ -6,7 +6,7 @@ from model.BaseModule import BasicGAN
 
 
 class Generator(torch.nn.Module):
-    def __init__(self, channels, dimension = 1024, input_size = 100):
+    def __init__(self, channels = 3, dimension = 1024, input_size = 100):
         super().__init__()
         # Input_dim = 100
         # Output_dim = C (number of channels)
@@ -37,6 +37,13 @@ class Generator(torch.nn.Module):
             nn.BatchNorm2d(num_features=dimension//8),
             nn.ReLU(True),
             
+            nn.ConvTranspose2d(in_channels=dimension//8, out_channels=dimension//8, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=dimension//8),
+            nn.ReLU(True),
+            
+            nn.ConvTranspose2d(in_channels=dimension//8, out_channels=dimension//8, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(num_features=dimension//8),
+            nn.ReLU(True),
             # CONV4
             # State (128x32x32)
             nn.ConvTranspose2d(in_channels=dimension//8, out_channels=channels, kernel_size=4, stride=2, padding=1))
@@ -52,7 +59,7 @@ class Generator(torch.nn.Module):
 
 
 class Discriminator(torch.nn.Module):
-    def __init__(self, channels,dimension):
+    def __init__(self, channels = 3, dimension = 256):
         super().__init__()
         # Input_dim = channels (CxHxW)
         # Output_dim = 1
@@ -76,7 +83,18 @@ class Discriminator(torch.nn.Module):
             # State (1024x H/8 x W/8)
             nn.Conv2d(in_channels=dimension*4, out_channels=dimension*8, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(dimension*8, affine=True),
-            nn.LeakyReLU(0.2, inplace=True))
+            nn.LeakyReLU(0.2, inplace=True),
+            
+            nn.Conv2d(in_channels=dimension*8, out_channels=dimension*8, kernel_size=4, stride=2, padding=1),
+            nn.InstanceNorm2d(dimension*8, affine=True),
+            nn.LeakyReLU(0.2, inplace=True),
+            
+            nn.Conv2d(in_channels=dimension*8, out_channels=dimension*8, kernel_size=4, stride=2, padding=1),
+            nn.InstanceNorm2d(dimension*8, affine=True),
+            nn.LeakyReLU(0.2, inplace=True)
+            )
+        
+        
             # outptut of main module --> State (2048x H/16 x W/16)
 
         self.output = nn.Sequential(
@@ -110,7 +128,7 @@ class WGAN(BasicGAN):
         # Now batches are callable self.data.next()
         self.data = self.get_infinite_batches(train_loader)
 
-        one = torch.FloatTensor([1]).to(self.device)
+        one = torch.tensor(1, dtype=torch.float).to(self.device)
         mone = (one * -1).to(self.device)
 
         for g_iter in range(self.generator_iters):
@@ -136,14 +154,18 @@ class WGAN(BasicGAN):
                 # Train with real images
                 d_loss_real = self.D(images)
                 d_loss_real = d_loss_real.mean()
+                #d_loss_real.backward(mone)
 
                 # Train with fake images
                 z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
                 fake_images = self.G(z)
                 d_loss_fake = self.D(fake_images)
                 d_loss_fake = d_loss_fake.mean()
+                #d_loss_fake.backward(one)
 
                 gradient_penalty = self.calculate_gradient_penalty(images.data, fake_images.data)
+                #gradient_penalty.backward()
+
 
                 d_loss = d_loss_fake - d_loss_real + gradient_penalty
                 d_loss.backward()
@@ -166,7 +188,7 @@ class WGAN(BasicGAN):
             
             fake_images = self.G(z)
             g_loss = self.D(fake_images)
-            g_loss = g_loss.mean().mean(0).view(1)
+            g_loss = g_loss.mean()
             g_loss.backward(mone)
             g_cost = -g_loss
             self.g_optimizer.step()
