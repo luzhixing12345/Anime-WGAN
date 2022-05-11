@@ -156,21 +156,21 @@ class WGAN(BasicGAN):
                 # Train with real images
                 d_loss_real = self.D(images)
                 d_loss_real = d_loss_real.mean()
-                #d_loss_real.backward(mone)
+                d_loss_real.backward(mone)
 
                 # Train with fake images
                 z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
                 fake_images = self.G(z)
                 d_loss_fake = self.D(fake_images)
                 d_loss_fake = d_loss_fake.mean()
-                #d_loss_fake.backward(one)
+                d_loss_fake.backward(one)
 
                 gradient_penalty = self.calculate_gradient_penalty(images.data, fake_images.data)
-                #gradient_penalty.backward()
+                gradient_penalty.backward()
 
 
                 d_loss = d_loss_fake - d_loss_real + gradient_penalty
-                d_loss.backward()
+                #d_loss.backward()
                 #Wasserstein_D = d_loss_real - d_loss_fake
                 self.d_optimizer.step()
             
