@@ -31,3 +31,29 @@ Back to the subject
 - train as usual to get a 64x64 image
 
 If you want to change the size of image or configuration, see `About training configuration` above.
+
+## Some questions you may ask and some problems you may encounter
+
+1. How to train with my own dataset?
+
+   see [train-info.md](train-info.md)
+
+2. The result doesn't seem well...
+
+   Well, that's hard to explain, I'm not an expert of ML/DL, find other model? Or you may want to see the relevant reference below to find other excellent models
+
+## Some errors you may encounter
+
+1. BrokenPipeError: [Errno 32] Broken pipe
+
+   a bug while multiple threads in Windows, add `DATALOADER.NUM_WORKERS 0`
+
+   ```bash
+   python train.py DATALOADER.NUM_WORKERS 0
+   ```
+
+2. CUDA out of memory
+
+   this happened when your GPU doesn't have enough memory to save the tensor
+
+   try to use smaller batchsize
