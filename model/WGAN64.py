@@ -21,44 +21,27 @@ class Generator(torch.nn.Module):
 
             # CONV1
             # State (1024x4x4)
-            #nn.ConvTranspose2d(in_channels=dimension, out_channels=dimension//2, kernel_size=4, stride=2, padding=1),
-            nn.Upsample(scale_factor=4, mode='nearest'),
-            nn.Conv2d(in_channels=dimension, out_channels=dimension//2, kernel_size=4, stride=2, padding=1),
+            nn.ConvTranspose2d(in_channels=dimension, out_channels=dimension//2, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(num_features=dimension//2),
             nn.ReLU(True),
 
             # CONV2
             # State (512x8x8)
-            #nn.ConvTranspose2d(in_channels=dimension//2, out_channels=dimension//4, kernel_size=4, stride=2, padding=1),
-            nn.Upsample(scale_factor=4, mode='nearest'),
-            nn.Conv2d(in_channels=dimension//2, out_channels=dimension//4, kernel_size=4, stride=2, padding=1),
+            nn.ConvTranspose2d(in_channels=dimension//2, out_channels=dimension//4, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(num_features=dimension//4),
             nn.ReLU(True),
             
             # CONV3
             # State (256x16x16)
-            #nn.ConvTranspose2d(in_channels=dimension//4, out_channels=dimension//8, kernel_size=4, stride=2, padding=1),
-            nn.Upsample(scale_factor=4, mode='nearest'),
-            nn.Conv2d(in_channels=dimension//4, out_channels=dimension//8, kernel_size=4, stride=2, padding=1),
+            nn.ConvTranspose2d(in_channels=dimension//4, out_channels=dimension//8, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(num_features=dimension//8),
             nn.ReLU(True),
             
-            # nn.ConvTranspose2d(in_channels=dimension//8, out_channels=dimension//16, kernel_size=4, stride=2, padding=1),
-            nn.Upsample(scale_factor=4, mode='nearest'),
-            nn.Conv2d(in_channels=dimension//8, out_channels=dimension//16, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=dimension//16),
-            nn.ReLU(True),
-            
-            #nn.ConvTranspose2d(in_channels=dimension//16, out_channels=dimension//32, kernel_size=4, stride=2, padding=1),
-            nn.Upsample(scale_factor=4, mode='nearest'),
-            nn.Conv2d(in_channels=dimension//16, out_channels=dimension//32, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(num_features=dimension//32),
-            nn.ReLU(True),
             # CONV4
             # State (128x32x32)
-            #nn.ConvTranspose2d(in_channels=dimension//32, out_channels=channels, kernel_size=4, stride=2, padding=1)
-            nn.Upsample(scale_factor=4, mode='nearest'),
-            nn.Conv2d(in_channels=dimension//32, out_channels=channels, kernel_size=4, stride=2, padding=1),
+            nn.ConvTranspose2d(in_channels=dimension//8, out_channels=channels, kernel_size=4, stride=2, padding=1)
+            #nn.Upsample(scale_factor=4, mode='nearest'),
+            #nn.Conv2d(in_channels=dimension//8, out_channels=channels, kernel_size=4, stride=2, padding=1),
             )
             # output of main module --> Image (batch size x C x 64 x 64)
             # default (32, 3, 64, 64)
@@ -78,42 +61,34 @@ class Discriminator(torch.nn.Module):
         # Output_dim = 1
         self.main_module = nn.Sequential(
             # State (CxHxW)
-            # default (32, 3, 256, 256)
+            # default (32, 3, 64, 64)
             nn.Conv2d(in_channels=channels, out_channels=dimension, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(dimension, affine=True),
             nn.LeakyReLU(0.2, inplace=True),
 
-            # State (256x 128 x 128)
+            # State (256x 32 x 32)
             nn.Conv2d(in_channels=dimension, out_channels=dimension*2, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(dimension*2, affine=True),
             nn.LeakyReLU(0.2, inplace=True),
 
-            # State (512x 64 x 64)
+            # State (512x 16 x 16)
             nn.Conv2d(in_channels=dimension*2, out_channels=dimension*4, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(dimension*4, affine=True),
             nn.LeakyReLU(0.2, inplace=True),
             
-            # State (1024x 32 x 32)
+            # State (1024x 8 x 8)
             nn.Conv2d(in_channels=dimension*4, out_channels=dimension*8, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(dimension*8, affine=True),
             nn.LeakyReLU(0.2, inplace=True),
             
-            # State (2048x 16 x 16)
-            nn.Conv2d(in_channels=dimension*8, out_channels=dimension*16, kernel_size=4, stride=2, padding=1),
-            nn.InstanceNorm2d(dimension*16, affine=True),
-            nn.LeakyReLU(0.2, inplace=True),
-            
-            # State (4096x 8 x 8)
-            nn.Conv2d(in_channels=dimension*16, out_channels=dimension*32, kernel_size=4, stride=2, padding=1),
-            nn.InstanceNorm2d(dimension*32, affine=True),
-            nn.LeakyReLU(0.2, inplace=True),
+            # State (2048x 4 x 4)
             )
         
         
             # outptut of main module --> State (8192x 4 x 4)
 
         self.output = nn.Sequential(
-            nn.Conv2d(in_channels=dimension*32, out_channels=1, kernel_size=4, stride=1, padding=0))
+            nn.Conv2d(in_channels=dimension*8, out_channels=1, kernel_size=4, stride=1, padding=0))
             # remove sigmoid function
             # output size (1 x (H/16-3) x (W/16-3))
             # default (32, 1, 1, 1)
@@ -124,7 +99,7 @@ class Discriminator(torch.nn.Module):
 
 
 
-class WGAN(BasicGAN):
+class WGAN64(BasicGAN):
     def __init__(self, cfg):
         super().__init__(cfg)
         self.G = Generator(self.channels,self.G_dimension,self.G_input_size)

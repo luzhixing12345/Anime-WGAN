@@ -1,0 +1,13 @@
+
+PROJECT_NAME: WGAN_FACES_64
+
+DATASET:
+  NAME: dataset/anime_face
+  TRAIN_TEST_RATIO: 1.0
+
+MODEL:
+  NAME: WGAN64
+
+SOLVER:
+  BASE_LR: 2e-4
+  BETAS: (0.5,0.999)

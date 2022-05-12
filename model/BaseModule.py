@@ -51,6 +51,7 @@ class BasicGAN(nn.Module):
         # change process
         self.fake_images = []
         self.save_number = cfg.IMAGE.SAVE_NUMBER
+        self.prepare_number = cfg.IMAGE.PREPARE_NUMBER
         self.save_row_number = cfg.IMAGE.SAVE_ROW_NUMBER
         self.noise = torch.randn(self.save_number, self.G_input_size,1,1).to(self.device)
         
@@ -70,7 +71,7 @@ class BasicGAN(nn.Module):
         print('Models save to {}'.format(self.model_checkpoint_dir))
 
     def load_model(self):
-        # D_model_path = self.cfg.MODEL.D.PATH
+        D_model_path = self.cfg.MODEL.D.PATH
         G_model_path = self.cfg.MODEL.G.PATH
         
         # if D_model_path != "":
@@ -79,21 +80,38 @@ class BasicGAN(nn.Module):
         if G_model_path != "":
             self.G.load_state_dict(torch.load(G_model_path))
             print("G_model loaded from {}".format(G_model_path))
+        if D_model_path != "":
+            self.D.load_state_dict(torch.load(D_model_path))
+            print("D_model loaded from {}".format(D_model_path))
     
     def generate_images(self):
         
         self.G.eval()
+        self.D.eval()
         with torch.no_grad():
-            z = torch.randn(self.save_number, self.G_input_size,1,1).to(self.device)
+            z = torch.randn(self.prepare_number, self.G_input_size,1,1).to(self.device)
             z = z.to(self.device)
             fake_images = self.G(z)
+            scores = self.D(fake_images).flatten()
+            # use images which have high scores top self.save_number
+            scores, indices = torch.sort(scores, descending=True)
+            best_indices = indices[:self.save_number]
+            worst_indices = indices[-self.save_number:]
+            
+            best_fake_images = fake_images[best_indices]
+            worst_fake_images = fake_images[worst_indices]
+            
         if not os.path.exists(self.image_save_path):
             os.makedirs(self.image_save_path)   
             
-        fake_images = fake_images.mul(0.5).add(0.5).cpu()
-        image_grid = utils.make_grid(fake_images, nrow=self.save_row_number)
-        utils.save_image(image_grid, os.path.join(self.image_save_path, '{}_fake_images.png'.format(self.cfg.PROJECT_NAME)))
-
+        best_fake_images = best_fake_images.mul(0.5).add(0.5).squeeze().cpu()
+        worst_fake_images = worst_fake_images.mul(0.5).add(0.5).squeeze().cpu()
+        
+        best_image_grid = utils.make_grid(best_fake_images, nrow=self.save_row_number)
+        worst_image_grid = utils.make_grid(worst_fake_images, nrow=self.save_row_number)
+        
+        utils.save_image(best_image_grid, os.path.join(self.image_save_path, '{}_best.png'.format(self.cfg.PROJECT_NAME)))
+        utils.save_image(worst_image_grid, os.path.join(self.image_save_path, '{}_worst.png'.format(self.cfg.PROJECT_NAME)))
         # save images one by one
         # toPIL = transforms.ToPILImage()
         # for i, image in enumerate(fake_images):

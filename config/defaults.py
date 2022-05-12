@@ -19,6 +19,7 @@ _C.IMAGE.PIXEL_MEAN = (0.5, 0.5, 0.5)
 _C.IMAGE.PIXEL_STD = (0.5, 0.5, 0.5)
 _C.IMAGE.NUMBER = 10 # number of images to be recorded
 _C.IMAGE.SAVE_NUMBER = 64 # number to save images
+_C.IMAGE.PREPARE_NUMBER = 4*_C.IMAGE.SAVE_NUMBER # number to prepare images
 _C.IMAGE.SAVE_ROW_NUMBER = 8 # row to save images
 _C.IMAGE.SAVE_PATH = "./images" # path to save images while running generate.py
 
@@ -39,7 +40,7 @@ _C.MODEL.G.PATH = ""
 # WGAN arguments
 _C.MODEL.WGAN = CN()
 _C.MODEL.WGAN.WEIGHT_CLIPING_LIMIT = 0.01
-_C.MODEL.WGAN.GENERATOR_ITERS = 40000
+_C.MODEL.WGAN.GENERATOR_ITERS = 50000
 _C.MODEL.WGAN.CRITIC_ITERS = 5
 _C.MODEL.WGAN.LAMBDA = 10
 
