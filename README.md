@@ -73,6 +73,8 @@ download the pretrained model D and G and move it under `./checkpoints`, then ru
 
 > actually if you just want to generate an anime picture you only need to download G
 
+## [About WGAN-GP and model structure](GAN.md)
+
 ## Result
 
 ### Anime Project
@@ -114,3 +116,9 @@ knowledge:
 - [DCGAN](https://arxiv.org/pdf/1511.06434.pdf) which using CNN in GAN has made a huge improvement.
 - https://github.com/nagadomi/lbpcascade_animeface
 - https://github.com/xiaoyou-bilibili/anime_avatar_gen
+- https://zhuanlan.zhihu.com/p/25071913
+- https://zhuanlan.zhihu.com/p/58260684
+- https://arxiv.org/pdf/1708.05509.pdf
+- [qipan](https://distill.pub/2016/deconv-checkerboard/)
+- https://www.zhihu.com/search?type=content&q=GAN%20%E6%A3%8B%E7%9B%98
+- https://zhuanlan.zhihu.com/p/58260684
