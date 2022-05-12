@@ -36,10 +36,10 @@ GAN的基本原理其实非常简单.假设我们有两个网络,G(Generator)和
   ```
 
   $$
-  H_{out} = \frac{H_{in}+2\times padding[0]-dilation[0]\times (kernel_size[0]-1)}{stride[0]}+1 = \frac{96-2\times 1-1\times (4-1)}{2}+1 = 48
+  H_{out} = \frac{H_{in}+2\times padding[0]-dilation[0]\times (kernel_size[0]-1)-1}{stride[0]}+1 = \frac{96+2\times 1-1\times (4-1)-1}{2}+1 = 48
   $$
   $$
-  W_{out} = \frac{W_{in}+2\times padding[0]-dilation[0]\times (kernel_size[0]-1)}{stride[0]}+1 = \frac{96-2\times 1-1\times (4-1)}{2}+1 = 48
+  W_{out} = \frac{W_{in}+2\times padding[0]-dilation[0]\times (kernel_size[0]-1)-1}{stride[0]}+1 = \frac{96+2\times 1-1\times (4-1)-1}{2}+1 = 48
   $$
 
   $$
@@ -53,6 +53,8 @@ GAN的基本原理其实非常简单.假设我们有两个网络,G(Generator)和
                         \times (\text{kernel\_size}[0] - 1) + \text{output\_padding}[0] + 1
   $$
   
+- [nn.PixelShuffle](https://pytorch.org/docs/stable/generated/torch.nn.PixelShuffle.html?highlight=nn%20pixelshuffle#torch.nn.PixelShuffle)
+
 ## Structure
 
 ```txt

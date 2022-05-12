@@ -3,15 +3,111 @@ import torch.nn as nn
 from torch.autograd import Variable
 import time
 from model.BaseModule import BasicGAN
-from .generator import Generator
-from .discriminator import Discriminator
 
 
-class WGAN256(BasicGAN):
+class Generator(torch.nn.Module):
+    def __init__(self, dimension = 768, input_size = 100):
+        super().__init__()
+        # Input_dim = 100
+        # Output_dim = C (number of channels)
+        self.main_module = nn.Sequential(
+            
+            # input is Z which size is (batch size x C x 1 X 1),going into a convolution
+            # by default (32, 100, 1, 1)
+            # project and reshape
+            nn.ConvTranspose2d(in_channels=input_size, out_channels=dimension, kernel_size=4, stride=1, padding=0),
+            nn.BatchNorm2d(num_features=dimension),
+            nn.ReLU(True),
+
+            # CONV1
+            # State (1024x4x4)
+            # nn.ConvTranspose2d(in_channels=dimension, out_channels=dimension//2, kernel_size=4, stride=2, padding=1),
+            nn.PixelShuffle(2),
+            nn.BatchNorm2d(num_features=dimension//4),
+            nn.ReLU(True),
+
+            # CONV2
+            # State (512x8x8)
+            #nn.ConvTranspose2d(in_channels=dimension//2, out_channels=dimension//4, kernel_size=4, stride=2, padding=1),
+            nn.PixelShuffle(2),
+            nn.BatchNorm2d(num_features=dimension//16),
+            nn.ReLU(True),
+            
+            # CONV3
+            # State (256x16x16)
+            #nn.ConvTranspose2d(in_channels=dimension//4, out_channels=dimension//8, kernel_size=4, stride=2, padding=1),
+            nn.PixelShuffle(2),
+            nn.BatchNorm2d(num_features=dimension//64),
+            nn.ReLU(True),
+            
+            # CONV4
+            # State (128x32x32)
+            #nn.ConvTranspose2d(in_channels=dimension//8, out_channels=channels, kernel_size=4, stride=2, padding=1)
+            nn.PixelShuffle(2),
+            #nn.Upsample(scale_factor=4, mode='nearest'),
+            #nn.Conv2d(in_channels=dimension//8, out_channels=channels, kernel_size=4, stride=2, padding=1),
+            )
+            # output of main module --> Image (batch size x C x 64 x 64)
+            # default (32, 3, 64, 64)
+
+        # output activation function is Tanh
+        self.output = nn.Tanh()
+
+    def forward(self, x):
+        x = self.main_module(x)
+        return self.output(x)
+
+
+class Discriminator(torch.nn.Module):
+    def __init__(self, channels = 3, dimension = 256):
+        super().__init__()
+        # Input_dim = channels (CxHxW)
+        # Output_dim = 1
+        self.main_module = nn.Sequential(
+            # State (CxHxW)
+            # default (32, 3, 64, 64)
+            nn.Conv2d(in_channels=channels, out_channels=dimension, kernel_size=4, stride=2, padding=1),
+            nn.InstanceNorm2d(dimension, affine=True),
+            nn.LeakyReLU(0.2, inplace=True),
+
+            # State (256x 32 x 32)
+            nn.Conv2d(in_channels=dimension, out_channels=dimension*2, kernel_size=4, stride=2, padding=1),
+            nn.InstanceNorm2d(dimension*2, affine=True),
+            nn.LeakyReLU(0.2, inplace=True),
+
+            # State (512x 16 x 16)
+            nn.Conv2d(in_channels=dimension*2, out_channels=dimension*4, kernel_size=4, stride=2, padding=1),
+            nn.InstanceNorm2d(dimension*4, affine=True),
+            nn.LeakyReLU(0.2, inplace=True),
+            
+            # State (1024x 8 x 8)
+            nn.Conv2d(in_channels=dimension*4, out_channels=dimension*8, kernel_size=4, stride=2, padding=1),
+            nn.InstanceNorm2d(dimension*8, affine=True),
+            nn.LeakyReLU(0.2, inplace=True),
+            
+            # State (2048x 4 x 4)
+            )
+        
+        
+            # outptut of main module --> State (8192x 4 x 4)
+
+        self.output = nn.Sequential(
+            nn.Conv2d(in_channels=dimension*8, out_channels=1, kernel_size=4, stride=1, padding=0))
+            # remove sigmoid function
+            # output size (1 x (H/16-3) x (W/16-3))
+            # default (32, 1, 1, 1)
+
+    def forward(self, x):
+        x = self.main_module(x)
+        return self.output(x)
+
+
+
+class WGAN64P(BasicGAN):
     def __init__(self, cfg):
         super().__init__(cfg)
-        self.G = Generator(self.channels,self.G_dimension,self.G_input_size)
-        self.D = Discriminator(self.channels,self.D_dimension)
+        self.G = Generator()
+        self.D = Discriminator()
 
         self.d_optimizer = torch.optim.Adam(self.D.parameters(), lr=cfg.SOLVER.BASE_LR, betas=cfg.SOLVER.BETAS)
         self.g_optimizer = torch.optim.Adam(self.G.parameters(), lr=cfg.SOLVER.BASE_LR, betas=cfg.SOLVER.BETAS)

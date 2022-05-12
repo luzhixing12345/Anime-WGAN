@@ -16,6 +16,7 @@ def build_model(cfg):
         'DCGAN': DCGAN,
         'WGAN64': WGAN64,
         'WGAN256': WGAN256,
+        'WGAN64P': WGAN64P,
     }
     model = total_model[cfg.MODEL.NAME](cfg)
 

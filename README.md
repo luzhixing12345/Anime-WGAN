@@ -59,7 +59,7 @@ by default it will generate 10 fake anime images under `./image`
 if you want to change the number of image or change the image position
 
 ```bash
-python generate.py MODEL.G.PATH './checkpoints/DCGAN/xxx.pth' IMAGE.NUMBER 20 IMAGE.SAVE_PATH 'another_path'
+python generate.py --config-file configs/WGAN64.yaml MODEL.G.PATH './checkpoints/WGAN_64/G.pth' MODEL.D.PATH 'checkpoints/WGAN_64/D.pth'
 ```
 
 ## Pretrained model
