@@ -19,7 +19,6 @@ _C.IMAGE.PIXEL_MEAN = (0.5, 0.5, 0.5)
 _C.IMAGE.PIXEL_STD = (0.5, 0.5, 0.5)
 _C.IMAGE.NUMBER = 10 # number of images to be recorded
 _C.IMAGE.SAVE_NUMBER = 64 # number to save images
-_C.IMAGE.PREPARE_NUMBER = 4*_C.IMAGE.SAVE_NUMBER # number to prepare images
 _C.IMAGE.SAVE_ROW_NUMBER = 8 # row to save images
 _C.IMAGE.SAVE_PATH = "./images" # path to save images while running generate.py
 
@@ -56,3 +55,4 @@ _C.SOLVER.EVALUATE_BATCH = 128
 # Misc options
 # ---------------------------------------------------------------------------- #
 _C.OUTPUT_DIR = "log"
+_C.LOG_CONFIGURATION = "config/logging.conf"

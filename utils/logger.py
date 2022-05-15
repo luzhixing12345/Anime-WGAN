@@ -5,44 +5,37 @@
 """
 
 import logging
+import logging.config
 import os
-import sys
 from torchvision import transforms
 import torch
 
+def set_logger(cfg):
+    logging.config.fileConfig(cfg.LOG_CONFIGURATION)
+    logger = logging.getLogger('LOGGER')
+    
+    file_handler = logging.FileHandler(os.path.join(cfg.OUTPUT_DIR, f"{cfg.PROJECT_NAME}.log"))
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(logger.handlers[0].formatter)
+    logger.addHandler(file_handler)
+    
+    
+def get_logger():
+    return logging.getLogger('LOGGER')
 
-def setup_logger(name, save_dir, distributed_rank):
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
-    # don't log results for the non-master process
-    if distributed_rank > 0:
-        return logger
-    ch = logging.StreamHandler(stream=sys.stdout)
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s")
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-    if save_dir:
-        fh = logging.FileHandler(os.path.join(save_dir, f"log_{name}.txt"), mode='w')
-        fh.setLevel(logging.DEBUG)
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
-
-    return logger
-
-class logger:
+class Logger:
     
     '''
     log in pytorch training
     '''
-    def __init__(self,log_dir) -> None:
+    def __init__(self,cfg) -> None:
         
-        self.log_dir = log_dir
-        if not os.path.exists(log_dir):
+        self.log_dir = os.path.join(cfg.OUTPUT_DIR, cfg.PROJECT_NAME)
+        if not os.path.exists(self.log_dir):
             os.makedirs(os.path.join(self.log_dir))
         
-        self.d_loss = []
+        self.logger = get_logger()
+        self.d_loss = []  
         self.g_loss = []
         self.iterations = []
         
@@ -87,7 +80,7 @@ class logger:
                 real_image.save(os.path.join(self.log_dir, epoch, f'real_image_{index}_F.png'))
             index += 1
             
-        print('successfully save images')
+        self.log('successfully save images')
         
     def save(self):
             
@@ -102,3 +95,6 @@ class logger:
                 f.write(str(iteration)+'\n')
         
         print('successfully save losses')
+        
+    def log(self,info):
+        self.logger.info(info)

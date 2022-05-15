@@ -1,6 +1,6 @@
 
 
-from .logger import setup_logger
+from .logger import set_logger,get_logger
 import argparse
 import os
 
@@ -11,6 +11,7 @@ def default_argument_parser():
     #parser.add_argument()
     
     parser.add_argument("--config-file", default="./configs/DCGAN.yaml" ,help="path to config file", type=str)
+    parser.add_argument("--generator",'-g',help='path to generator model weights')
     parser.add_argument("opts", help="Modify config options using the command-line", default=None,
                         nargs=argparse.REMAINDER)
     return parser
@@ -23,12 +24,18 @@ def project_preprocess(cfg):
         cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
     cfg.freeze()
+    
 
+    if args.generator:
+        cfg.defreeze()
+        cfg.MODEL.G.PATH = args.generator
+        cfg.freeze()    
     output_dir = cfg.OUTPUT_DIR
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    logger = setup_logger(cfg.PROJECT_NAME, output_dir, 0)
+    set_logger(cfg)
+    logger = get_logger()
     logger.info(args)
 
     if args.config_file != "":

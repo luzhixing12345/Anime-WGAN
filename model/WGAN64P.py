@@ -22,30 +22,36 @@ class Generator(torch.nn.Module):
             # CONV1
             # State (1024x4x4)
             # nn.ConvTranspose2d(in_channels=dimension, out_channels=dimension//2, kernel_size=4, stride=2, padding=1),
-            nn.PixelShuffle(2),
-            nn.BatchNorm2d(num_features=dimension//4),
+            #nn.PixelShuffle(2),
+            nn.Upsample(scale_factor=2),
+            nn.Conv2d(in_channels=dimension, out_channels=dimension//2, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(num_features=dimension//2),
             nn.ReLU(True),
 
             # CONV2
             # State (512x8x8)
             #nn.ConvTranspose2d(in_channels=dimension//2, out_channels=dimension//4, kernel_size=4, stride=2, padding=1),
-            nn.PixelShuffle(2),
-            nn.BatchNorm2d(num_features=dimension//16),
+            #nn.PixelShuffle(2),
+            nn.Upsample(scale_factor=2),
+            nn.Conv2d(in_channels=dimension//2, out_channels=dimension//4, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(num_features=dimension//4),
             nn.ReLU(True),
             
             # CONV3
             # State (256x16x16)
             #nn.ConvTranspose2d(in_channels=dimension//4, out_channels=dimension//8, kernel_size=4, stride=2, padding=1),
-            nn.PixelShuffle(2),
-            nn.BatchNorm2d(num_features=dimension//64),
+            #nn.PixelShuffle(2),
+            nn.Upsample(scale_factor=2),
+            nn.Conv2d(in_channels=dimension//4, out_channels=dimension//8, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(num_features=dimension//8),
             nn.ReLU(True),
             
             # CONV4
             # State (128x32x32)
             #nn.ConvTranspose2d(in_channels=dimension//8, out_channels=channels, kernel_size=4, stride=2, padding=1)
-            nn.PixelShuffle(2),
-            #nn.Upsample(scale_factor=4, mode='nearest'),
-            #nn.Conv2d(in_channels=dimension//8, out_channels=channels, kernel_size=4, stride=2, padding=1),
+            #nn.PixelShuffle(2),
+            nn.Upsample(scale_factor=2),
+            nn.Conv2d(in_channels=dimension//8, out_channels=3, kernel_size=3, stride=1, padding=1),
             )
             # output of main module --> Image (batch size x C x 64 x 64)
             # default (32, 3, 64, 64)
@@ -188,7 +194,7 @@ class WGAN64P(BasicGAN):
             self.g_optimizer.step()
 
             if ((g_iter + 1) % self.checkpoint_freq) == 0:
-                print(f'Generator iteration: {g_iter}/{self.generator_iters}, g_loss: {g_loss.data.item()}')
+                self.logger.log(f'Generator iteration: {g_iter}/{self.generator_iters}, g_loss: {g_loss.data.item()}')
                 z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
 
                 # log losses and save images
@@ -217,7 +223,7 @@ class WGAN64P(BasicGAN):
                 self.record_fake_images()
                     
         end_time = time.time()
-        print("Total time: %.2f" % (end_time - start_time))
+        self.logger.log("Total time: %.2f" % (end_time - start_time))
         # Save the trained parameters
         self.save_model(g_iter)
         self.logger.save()

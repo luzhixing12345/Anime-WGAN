@@ -2,7 +2,9 @@
 
 ## Inroduction
 
-Using WGAN to generate anime faces
+![WGAN64_anime](https://raw.githubusercontent.com/learner-lu/picbed/master/WGAN64_anime.png)
+
+Using WGAN-GP to generate anime faces
 
 TODO: an online website
 
@@ -22,44 +24,48 @@ TODO: an online website
   pip install -r requirements.txt
   ```
 
-## Dataset(Anime)
+## Dataset
 
-![20220507024303](https://raw.githubusercontent.com/learner-lu/picbed/master/20220507024303.png)![20220507024427](https://raw.githubusercontent.com/learner-lu/picbed/master/20220507024427.png)
+- [anime256](https://github.com/luzhixing12345/anime-face-dataset/releases/download/v0.0.1/anime256.zip)
 
-download the dataset zip and unzip it under `dataset` as `dataset/anime`
+  I crawled pictures with high resolution and manually removed some unsatisfied pictures. The whole dataset contains 2.7w+ anime faces with resolution of 256x256 in high quality
 
-total dataset contains about 50000+ images of 96x96
+- [anime](https://github.com/bchao1/Anime-Face-Dataset)
 
-- [Github-download](https://github.com/luzhixing12345/GAN/releases/download/v0.0.2/faces.zip)
+  Another dataset I found, 5w+, 96x96, in good quality
 
-  > try to use [Github proxy](https://ghproxy.com/) if too slow
+download the dataset zip and unzip it under `dataset` as `dataset/anime` and `dataset/anime256`
+
+> try to use [Github proxy](https://ghproxy.com/) if too slow
+>
+> see [more information about anime dataset](https://github.com/luzhixing12345/anime-face-dataset)
 
 ## Use
 
 ### Train
 
-- easy run WGAN as
+- easy run as
 
   ```bash
-  python train.py --config-file configs/WGAN.yaml
+  python train.py --config-file configs/WGAN64.yaml
   ```
 
-in every epoch fake images and real images will be saved in `log/WGAN/{iteration}`, and checkpoints will be saved in `checkpoints/WGAN`
+in every epoch fake images and real images will be saved in `log/WGAN_ANIME256/{iteration}`, and checkpoints will be saved in `checkpoints/WGAN_ANIME256`
 
-> see more information in [train-info.md](./train-info.md) if you want to train a model by yourself
+**ATTENTION**: see more information in [train-info.md](./train-info.md) if you want to train a model by yourself
 
 ### Generate an anime picture
 
 ```bash
-python generate.py MODEL.G.PATH './checkpoints/DCGAN/xxx.pth'
+python generate.py -g './checkpoints/WGAN_ANIME256/xxx.pth'
 ```
 
-by default it will generate 10 fake anime images under `./image`
+by default it will generate an 8x8 grid fake anime image under `./image`
 
 if you want to change the number of image or change the image position
 
 ```bash
-python generate.py --config-file configs/WGAN64.yaml MODEL.G.PATH './checkpoints/WGAN_64/G.pth' MODEL.D.PATH 'checkpoints/WGAN_64/D.pth'
+python generate.py --config-file configs/WGAN64.yaml MODEL.G.PATH './checkpoints/G.pth' MODEL.D.PATH 'checkpoints/WGAN_64/D.pth'
 ```
 
 ## Pretrained model

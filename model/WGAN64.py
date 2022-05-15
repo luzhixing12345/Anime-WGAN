@@ -184,7 +184,7 @@ class WGAN64(BasicGAN):
             self.g_optimizer.step()
 
             if ((g_iter + 1) % self.checkpoint_freq) == 0:
-                print(f'Generator iteration: {g_iter}/{self.generator_iters}, g_loss: {g_loss.data.item()}')
+                self.logger.log(f'Generator iteration: {g_iter}/{self.generator_iters}, g_loss: {g_loss.data.item()}')
                 z = torch.randn(self.batch_size, self.G_input_size,1,1).to(self.device)
 
                 # log losses and save images
@@ -213,7 +213,7 @@ class WGAN64(BasicGAN):
                 self.record_fake_images()
                     
         end_time = time.time()
-        print("Total time: %.2f" % (end_time - start_time))
+        self.logger.log("Total time: %.2f" % (end_time - start_time))
         # Save the trained parameters
         self.save_model(g_iter)
         self.logger.save()

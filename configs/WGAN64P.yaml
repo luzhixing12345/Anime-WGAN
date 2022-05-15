@@ -1,5 +1,5 @@
 
-PROJECT_NAME: WGAN64P
+PROJECT_NAME: WGAN64P_anime
 
 DATASET:
   NAME: dataset/anime
