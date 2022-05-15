@@ -1,12 +1,12 @@
 
-PROJECT_NAME: WGAN64P_anime
+PROJECT_NAME: WGAN
 
 DATASET:
-  NAME: dataset/anime
+  NAME: dataset/anime256
   TRAIN_TEST_RATIO: 1.0
 
 MODEL:
-  NAME: WGAN64P
+  NAME: WGAN64
 
 SOLVER:
   BASE_LR: 1e-4

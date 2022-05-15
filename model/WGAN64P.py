@@ -109,7 +109,7 @@ class Discriminator(torch.nn.Module):
 
 
 
-class WGAN64P(BasicGAN):
+class WGANP(BasicGAN):
     def __init__(self, cfg):
         super().__init__(cfg)
         self.G = Generator()

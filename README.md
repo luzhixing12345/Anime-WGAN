@@ -6,6 +6,8 @@
 
 TODO: an online website
 
+[Bilibili video](123)
+
 ## Requirements
 
 - python : 3.7
@@ -28,65 +30,86 @@ TODO: an online website
 
   I crawled pictures with high resolution and manually removed some unsatisfied pictures. The whole dataset contains 2.7w+ anime faces with resolution of 256x256 in high quality
 
-- [anime](https://github.com/bchao1/Anime-Face-Dataset)
+- [anime](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.2/faces.zip)
 
-  Another dataset I found, 5w+, 96x96, in good quality
+  Another dataset I found, 5w+, resolution of 96x96, in good quality
 
-download the dataset zip and unzip it under `dataset` as `dataset/anime` and `dataset/anime256`
+download the dataset zip and unzip it under `dataset` as `dataset/anime256` and `dataset/anime`
 
 > try to use [Github proxy](https://ghproxy.com/) if too slow
 >
-> see [more information about anime dataset](https://github.com/luzhixing12345/anime-face-dataset)
+> see [more information about anime datasets](https://github.com/luzhixing12345/anime-face-dataset)
 
 ## Use
 
 ### Train
 
-```bash
-python train.py --config-file configs/WGAN64.yaml
-```
+I design two model structure.
 
-in every epoch fake images and real images will be saved in `log/WGAN_ANIME256/{iteration}`, you could check the training precess of WGAN at any time, and checkpoints will be saved in `checkpoints/WGAN_ANIME256`
+- run WGAN model as
 
-**ATTENTION**: see more information in [train-info.md](./train-info.md) if you want to train a model by yourself
+  ```bash
+  python train.py --config-file configs/WGAN.yaml
+  ```
+
+- run WGANP model as
+
+  ```bash
+  python train.py --config-file configs/WGANP.yaml
+  ```
+
+in every epoch fake images and real images will be saved in `log/WGAN/{epoch}` in resolution of 64x64, you could check the training precess of WGAN at any time, and checkpoints will be saved in `checkpoints/WGAN`
+
+**ATTENTION**: Actually this project is a bit complex than its introduction, if you want to train a model by yourself, see more information in [train-info.md](./train-info.md)
 
 ### Generate an anime picture
 
-```bash
-python generate.py --config-file configs/WGAN64.yaml -g checkpoints/WGAN_ANIME256/{MODEL-WEIGHT-NAME}.pth
-```
+- use WGAN model as
+
+  ```bash
+  python generate.py --config-file configs/WGAN.yaml -g checkpoints/WGAN/{MODEL-WEIGHT-NAME}.pth
+  ```
+
+- use WGANP model as
+
+  ```bash
+  python generate.py --config-file configs/WGANP.yaml -g checkpoints/WGANP/{MODEL-WEIGHT-NAME}.pth
+  ```
 
 by default it will generate an 8x8 grid fake anime image under `./image`
 
 Arguments:
 
-- `-g`: short for generator, one argument with the name of the model weights, saved in `checkpoint/WGAN_ANIME256` by default
+- `-g`: short for generator, one argument with the name of the model weights
 - `-s`: short for separate, no argument. Use `-s` to separate the grid image into 64 images
 
 ## Pretrained model
 
-|dataset|Discriminator|download|Generator|download|
-|:--:|:--:|:--:|:--:|:--:|
-|anime256|D|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/ANIME256_D_epoch_39999.pth)|G|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/ANIME256_G_epoch_39999.pth)|
-|anime|D|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGAN64_anime_D_epoch_39999.pth)|G|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGAN64_anime_G_epoch_39999.pth)|
+|model|dataset|Discriminator|Generator|
+|:--:|:--:|:--:|:--:|
+|WGAN|ANIME256|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGAN_D_ANIME256.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGAN_G_ANIME256.pth)|
+||ANIME|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGAN_D_ANIME.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGAN_G_ANIME.pth)|
+|WGANP|ANIME256|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_D_ANIME256.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_G_ANIME256.pth)|
+||ANIME|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_D_ANIME.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_G_ANIME.pth)|
 
-If you don't want to train by yourself(about 36h), download the pretrained model D and G and move it under `./checkpoints`, then run generate.py as above to generate images, remember to use the correct path and model name.
+If you don't want to train by yourself(about 36~48h), download the pretrained model D and G and move it under `./checkpoints`, then run generate.py as above to generate images, remember to use the correct path and model name.
 
-> actually if you just want to generate an anime picture you only need to download G
+> actually if you just want to generate an anime picture you only need to download G, but whatever, I uploaded all.
 
-## About WGAN-GP and model structure
+## Detail information about GAN and the model
 
-if you are familiar with **Chinese**, you could see [my blog](https://luzhixing12345.github.io/tags/GAN/) which recorded my understanding of GAN, DCGAN, WGAN-CP, WGAN-GP, the evaluation method of GAN.
+if you are familiar with **Chinese**, you could visit [my blog](https://luzhixing12345.github.io/tags/GAN/) which recorded my understanding of GAN, DCGAN, WGAN-CP, WGAN-GP, the evaluation method of GAN, and the whole project.
 
 Sorry for my poor english, translate it into english if you really need it.
 
 ## Result
 
+- generated images
+- latent walk
+
 ## Conclusion
 
 ## Some extra work
-
-TODO a website using this pretrained model
 
 if you have any other question, leave your confusion in Issue and I will apply as soon as possible.
 
