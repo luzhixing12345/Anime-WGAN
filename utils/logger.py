@@ -49,8 +49,6 @@ class Logger:
         
         real_images = info['real_images']
         fake_images = info['fake_images']
-        real_labels = info['real_labels']
-        fake_labels = info['fake_labels']
 
         epoch = 'epoch_'+str(epoch)
         if not os.path.exists(os.path.join(self.log_dir,epoch)):
@@ -70,14 +68,9 @@ class Logger:
             fake_image = toPIL(fake_image)
             real_image = toPIL(real_image)
             
-            if fake_labels[index]>0.5:
-                fake_image.save(os.path.join(self.log_dir, epoch, f'fake_image_{index}_T.png'))
-            else:
-                fake_image.save(os.path.join(self.log_dir, epoch, f'fake_image_{index}_F.png'))
-            if real_labels[index]>0.5:
-                real_image.save(os.path.join(self.log_dir, epoch, f'real_image_{index}_T.png'))
-            else:
-                real_image.save(os.path.join(self.log_dir, epoch, f'real_image_{index}_F.png'))
+            fake_image.save(os.path.join(self.log_dir, epoch, f'fake_image_{index}.png'))
+            real_image.save(os.path.join(self.log_dir, epoch, f'real_image_{index}.png'))
+
             index += 1
             
         self.log('successfully save images')
