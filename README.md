@@ -57,7 +57,7 @@ in every epoch fake images and real images will be saved in `log/WGAN_ANIME256/{
 ### Generate an anime picture
 
 ```bash
-python generate.py -g './checkpoints/WGAN_ANIME256/xxx.pth'
+python generate.py --config-file configs/WGAN64.yaml -g checkpoints/WGAN_ANIME256/xxx.pth
 ```
 
 by default it will generate an 8x8 grid fake anime image under `./image`

@@ -23,13 +23,10 @@ def project_preprocess(cfg):
     if args.config_file != "":
         cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
+    if args.generator:
+        cfg.MODEL.G.PATH = args.generator  
     cfg.freeze()
     
-
-    if args.generator:
-        cfg.defreeze()
-        cfg.MODEL.G.PATH = args.generator
-        cfg.freeze()    
     output_dir = cfg.OUTPUT_DIR
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
