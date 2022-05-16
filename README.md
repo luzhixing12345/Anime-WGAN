@@ -92,13 +92,13 @@ Arguments:
 |WGANP|ANIME256|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_D_ANIME256.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_G_ANIME256.pth)|
 ||ANIME|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_D_ANIME.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_G_ANIME.pth)|
 
-If you don't want to train by yourself(about 36~48h), download the pretrained model D and G and move it under `./checkpoints`, then run generate.py as above to generate images, remember to use the correct path and model name.
+If you don't want to train by yourself(about 36~48h), download the pretrained model G and move it under `./checkpoints`, then run generate.py as above to generate images, remember to use the correct path and model name.
 
 > actually if you just want to generate an anime picture you only need to download G, but whatever, I uploaded all.
 
-## Detail information about GAN and the model
+## Detail information about this project
 
-if you are familiar with **Chinese**, you could visit [my blog](https://luzhixing12345.github.io/tags/GAN/) which recorded my understanding of GAN, DCGAN, WGAN-CP, WGAN-GP, the evaluation method of GAN, and the whole project.
+If you are familiar with **Chinese**, you could visit [my blog](https://luzhixing12345.github.io/tags/GAN/) which recorded my understanding of GAN, DCGAN, WGAN-CP, WGAN-GP, the evaluation method of GAN, and the whole project.
 
 Sorry for my poor english, translate it into english if you really need it.
 
