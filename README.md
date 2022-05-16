@@ -127,7 +127,7 @@ Sorry for my poor english, translate it into english if you really need it.
 
   well, cute girls, doesn't it?
 
-- latent walk
+- walking latent space
 
   > view my blog if you are not familiar with latent space
 
@@ -139,11 +139,17 @@ Sorry for my poor english, translate it into english if you really need it.
   |:--:|:--:|
   |![asdhjono](https://raw.githubusercontent.com/learner-lu/picbed/master/asdhjono.gif)|![hcouga](https://raw.githubusercontent.com/learner-lu/picbed/master/hcouga.gif)|
 
-- loss curve and IC curve
+- GAN training process
 
-  actually loss curve doesn't mean a lot, because there are two model training together. And Inception score(IC) also has some problems to evluate the quality of the generated images.
+  > for the same noise input, the process of different generated images
 
-  > a little strange curve, I don't know why either ...
+  |WGAN + anime256|WGAN + anime|
+  |:--:|:--:|
+  |![ANIME256_process](https://raw.githubusercontent.com/learner-lu/picbed/master/ANIME256_process.gif)|![WGAN64_anime_process](https://raw.githubusercontent.com/learner-lu/picbed/master/WGAN64_anime_process.gif)|
+
+  |WGANP + anime256|WGANP + anime|
+  |:--:|:--:|
+  |![ANIME256P_process](https://raw.githubusercontent.com/learner-lu/picbed/master/ANIME256P_process.gif)|![WGAN64P_anime_process](https://raw.githubusercontent.com/learner-lu/picbed/master/WGAN64P_anime_process.gif)|
 
 ## Conclusion
 

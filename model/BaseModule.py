@@ -147,16 +147,16 @@ class BasicGAN(nn.Module):
         return inception_score
     
     # ABORT
-    def save_best_model(self):
+    # def save_best_model(self):
         
-        # copy best model to current directory
-        if self.best_model_path != '':
-            self.logger.log('best model saved to {}'.format(self.best_model_path) + ':' + str(self.max_inception_score))
-            self.logger.log('Copying best model to current directory')
-            shutil.copy(self.best_model_path, os.path.join(self.model_checkpoint_dir, 'best_model.pth'))
-            self.logger.log('Copying best model to current directory done')
-        else:
-            self.logger.log('No best model found')
+    #     # copy best model to current directory
+    #     if self.best_model_path != '':
+    #         self.logger.log('best model saved to {}'.format(self.best_model_path) + ':' + str(self.max_inception_score))
+    #         self.logger.log('Copying best model to current directory')
+    #         shutil.copy(self.best_model_path, os.path.join(self.model_checkpoint_dir, 'best_model.pth'))
+    #         self.logger.log('Copying best model to current directory done')
+    #     else:
+    #         self.logger.log('No best model found')
         
         
     def walking_latent_space(self):
@@ -186,8 +186,8 @@ class BasicGAN(nn.Module):
             img_grid = np.transpose(image_grid.numpy(), (1, 2, 0))
             walking_space_images.append(img_grid)
 
-        imageio.mimsave(os.path.join(self.image_save_path, 'walking_latent_space.gif'), walking_space_images)
-        self.logger.log('Walking latent space done, save to {}'.format(os.path.join(self.image_save_path, 'walking_latent_space.gif')))
+        imageio.mimsave(os.path.join(self.log_dir, 'walking_latent_space.gif'), walking_space_images)
+        self.logger.log('Walking latent space done, save to {}'.format(os.path.join(self.log_dir, 'walking_latent_space.gif')))
         
         
 

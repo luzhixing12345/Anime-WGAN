@@ -34,9 +34,10 @@ def preprare_dataloader(cfg):
     # split dataset into train and test
     # unsupervise learning only use train dataset, supervised learning use train and test dataset
     # by default DATASET.TRAIN_TEST_RATIO = 1
-    # train_size = int(len(dataset) * cfg.DATASET.TRAIN_TEST_RATIO)
-    # test_size = len(dataset) - train_size
-    # train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+    if cfg.DATASET.TRAIN_TEST_RATIO!=1:
+        train_size = int(len(dataset) * cfg.DATASET.TRAIN_TEST_RATIO)
+        test_size = len(dataset) - train_size
+        dataset, test_dataset = random_split(dataset, [train_size, test_size])
     
     # train_dataloader = DataLoader(train_dataset, batch_size=cfg.DATALOADER.BATCH_SIZE, shuffle=True, num_workers=cfg.DATALOADER.NUM_WORKERS)
     # test_dataloader = DataLoader(test_dataset, batch_size=cfg.DATALOADER.BATCH_SIZE, shuffle=True, num_workers=cfg.DATALOADER.NUM_WORKERS)

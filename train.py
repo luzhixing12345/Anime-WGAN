@@ -19,9 +19,8 @@ def main():
     
     model = build_model(cfg)
     model.train(train_dataloader)
-    model.save_gif()
     model.generator_images()
-    print('\nDone!')
+    model.save_gif()
 
 if __name__ == '__main__':
     main()
