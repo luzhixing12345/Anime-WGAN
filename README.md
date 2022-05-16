@@ -149,15 +149,13 @@ Sorry for my poor english, translate it into english if you really need it.
 
 This is my first try of GAN, I have heard of it many times but never try to learn it. Concidentally here comes my final report of [data science introduction](https://github.com/luzhixing12345/data-science-introduction) lesson, and the final homework is to do something related to data. So that's a good chance to learn GAN ! I read some papers of GAN and it's really interesting.
 
-[An article](https://zhuanlan.zhihu.com/p/24767059) from Zhihu inspired me that why not try to generate my own anime faces/avater? So I start to code.
+[An article](https://zhuanlan.zhihu.com/p/24767059) from Zhihu inspired me that why not try to generate my own anime faces/avatar? So I start to code.
 
 Actually I must admit that my pretrained model doesn't perform as well as I excepted, there maybe many excellent model structures or projects which can solve this problem well today. However, the origin purposal of this project is just to learn something about GAN, I choose to use WGAN-GP for it's wonderfull mathematical derivation, I'd like to finish my own project instead of just git clone an excellent project and run without doing anything.
 
 Especialy thank to [pytorch-wgan](https://github.com/Zeleni9/pytorch-wgan), really helps me a lot. Thank you so much.
 
 Actually at first I want to generate 256x256 images, that's why I crawled 256x256 images and made that dataset. But as the size of image multiply 4, the model performs extremly bad. Maybe I need a better model struture. I've tried to use residual block but it doesn't work well.
-
-If you are interested in this part, you could check in branch `model256` for more details.
 
 If you have any other question, leave your confusion in Issue and I will apply as soon as possible.
 
