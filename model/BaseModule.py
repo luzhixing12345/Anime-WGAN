@@ -24,29 +24,32 @@ class BasicGAN(nn.Module):
     def __init__(self,cfg):
         super(BasicGAN, self).__init__()
         self.cfg = cfg
+        
         # input image
         self.height = cfg.IMAGE.HEIGHT
         self.width = cfg.IMAGE.WIDTH
         self.channels = cfg.IMAGE.CHANNEL
+        self.image_save_path = cfg.IMAGE.SAVE_PATH
+        self.image_separate = cfg.IMAGE.SEPARATE # default False, use -s to separate
+        self.number_of_images = self.cfg.IMAGE.NUMBER
+        
         # some hyperparameters
         self.epochs = cfg.SOLVER.EPOCHS
         self.batch_size = cfg.DATALOADER.BATCH_SIZE
+        
         # discriminator
         self.D_dimension = cfg.MODEL.D.DIMENSION
+        
         # generator
         self.G_dimension = cfg.MODEL.G.DIMENSION # 1024
         self.G_input_size = cfg.MODEL.G.INPUT_SIZE # 100
+        
         # some default parameters
         self.device = cfg.MODEL.DEVICE
         self.model_checkpoint_dir = os.path.join(cfg.MODEL.CHECKPOINT_DIR, cfg.PROJECT_NAME)
         self.checkpoint_freq = cfg.SOLVER.CHECKPOINT_FREQ
         self.log_dir = os.path.join(cfg.OUTPUT_DIR, cfg.PROJECT_NAME)
         self.logger = Logger(cfg)
-        self.number_of_images = self.cfg.IMAGE.NUMBER
-        self.image_save_path = cfg.IMAGE.SAVE_PATH
-        self.image_separate = cfg.IMAGE.SEPARATE # default False, use -s to separate
-        self.evaluate_iteration = cfg.SOLVER.EVALUATE_ITERATION
-        self.evaluate_batch = cfg.SOLVER.EVALUATE_BATCH
         if not os.path.exists(self.model_checkpoint_dir):
             os.makedirs(self.model_checkpoint_dir)
 
@@ -57,12 +60,17 @@ class BasicGAN(nn.Module):
         self.noise = torch.randn(self.save_number, self.G_input_size,1,1).to(self.device)
         
         # evaluation
+        self.use_IC = self.cfg.MODEL.WGAN.IC
         self.max_inception_score = 0
+        self.evaluate_iteration = cfg.SOLVER.EVALUATE_ITERATION
+        self.evaluate_batch = cfg.SOLVER.EVALUATE_BATCH
         
     def save_model(self,epoch):
-        inception_score = self.evaluate_generator()
-        if inception_score > self.max_inception_score:
-            self.max_inception_score = inception_score
+        
+        if self.use_IC:
+            inception_score = self.evaluate_generator()
+            if inception_score > self.max_inception_score:
+                self.max_inception_score = inception_score
             # self.best_model_path = os.path.join(self.model_checkpoint_dir, f'{self.cfg.PROJECT_NAME}_D_epoch_{epoch}.pth')
             # self.logger.log("New best model! Saving to {}".format(self.best_model_path))
         
