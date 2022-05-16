@@ -65,16 +65,16 @@ I design two model structures.
 - use WGAN model as
 
   ```bash
-  python generate.py --config-file configs/WGAN.yaml -g checkpoints/WGAN/{MODEL-WEIGHT-NAME}.pth
+  python generate.py --config-file configs/WGAN.yaml -g checkpoints/WGAN/WGAN_G_epoch_39999.pth.pth
   ```
 
 - use WGANP model as
 
   ```bash
-  python generate.py --config-file configs/WGANP.yaml -g checkpoints/WGANP/{MODEL-WEIGHT-NAME}.pth
+  python generate.py --config-file configs/WGANP.yaml -g checkpoints/WGANP/WGANP_G_epoch_39999.pth.pth
   ```
 
-by default it will generate an 8x8 grid fake anime image under `./image`
+by default it will generate an 8x8 grid fake anime image under `./images`
 
 Arguments:
 
@@ -107,7 +107,7 @@ see more information about [Supercomputing Center of Wuhan University](http://hp
 |WGANP|ANIME256|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_D_ANIME256.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_G_ANIME256.pth)|
 ||ANIME|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_D_ANIME.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_G_ANIME.pth)|
 
-If you don't want to train by yourself(about 36~48h), download the pretrained model G and move it under `./checkpoints`, then run generate.py as above to generate images, **remember to use the correct path and model name.**
+If you don't want to train by yourself(about 36~48h), download the pretrained model G and move it under `./checkpoints`, then run generate.py as above to generate images, **remember to use the correct path name.**
 
 > actually if you just want to generate an anime picture you only need to download G, but whatever, I uploaded all.
 
