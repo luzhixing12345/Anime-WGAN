@@ -6,7 +6,7 @@ Wish you could have enough patience to read.
 
 ## About training configuration
 
-I don't like to use parameters carried by long command. All the configuration infomation is in [config/defaults.py](config/defaults.py). I think the name of each parameter is clear enough for you to understand what it infers. You may change as you like, batch size, epochs and so on.
+I don't like to use parameters carried by long command. All the configuration infomation is in [config/defaults.py](config/defaults.py). I think the name of each parameter is clear enough for you to understand what it infers. You may change as you like, batch size, learning rate and so on.
 
 logging part comes from python module `logging`, I think it's a more elegent way to log something instead of just using `print`.
 
@@ -15,6 +15,26 @@ Except the default configuration information, you **ONLY NEED TO FOUCES ON** det
 [WGAN.yaml](configs/WGAN.yaml) use some configurations different from [defaults.py](config/defaults.py), which needs to declared and it will overwrite the corresponding configurations while the program running.
 
 So if you want to change the dataset from `anime256` to `anime`, you just need to change the yaml file.
+
+FROM
+
+```yaml
+PROJECT_NAME: WGAN
+
+DATASET:
+  NAME: dataset/anime256
+  TRAIN_TEST_RATIO: 1.0
+```
+
+TO
+
+```yaml
+PROJECT_NAME: WGAN
+
+DATASET:
+  NAME: dataset/anime
+  TRAIN_TEST_RATIO: 1.0
+```
 
 If you don't want to steadily change file, you could also use the same yaml file but follow with the corresponding configuration like
 
@@ -26,21 +46,31 @@ python train.py --config-file configs/WGAN.yaml DATASET.NAME anime
 python train.py --config-file configs/WGANP.yaml MODEL.WGAN.GENERATOR_ITERS 50000
 ```
 
-**BUT PAY ATTENTION THAT** if you want to change the size of image: `IMAGE.HEIGHT` or `IMAGE.WIDTH`. It's a little complex, you also need to change the network structure to fix your new size, I wrote some annotations in [WGAN.py](model/WGAN.py). There is the expected size of each layer in generator and discriminator. You need to calculate the expected input size and outpur size and change the network structure to fix your new size. Wish my annotations would help.
+- **PAY ATTENTION THAT** if you want to change the size of image: `IMAGE.HEIGHT` or `IMAGE.WIDTH`. It's a little complex, you also need to change the network structure to fix your new size, I wrote some annotations in [WGAN.py](model/WGAN.py). There is the expected size of each layer in generator and discriminator. You need to calculate the expected input size and outpur size and change the network structure to fix your new size. Wish my annotations would help.
 
-**PAY ATTENTION THAT** if you want to use the same yaml file to train twice or more, **remember to use a unique PROJECT_NAME**, the same PROJECT_NAME would cover the before.
+- **PAY ATTENTION THAT** if you want to use the same yaml file to train twice or more, **remember to use a unique PROJECT_NAME**, the same PROJECT_NAME would cover the before.
 
-```bash
-python train.py --config-file configs/WGAN.yaml PROJECT_NAME MYTRAIN_1
-```
+  ```bash
+  python train.py --config-file configs/WGAN.yaml PROJECT_NAME MYTRAIN_1
+  ```
 
-The whole process comes from my [python work flow](https://github.com/luzhixing12345/python-template)
+  or change in yaml file
 
-> You may notice that there is a DCGAN in the project, yes, but after training, DCGAN does not perform well in anime faces generating. So I abort this GAN model and try to use WGAN. In the paper of DCGAN, there are some tricks such as lr and betas of optimizer which are declared in [configs/DCGAN.yaml](configs/DCGAN.yaml). And WGAN also use the basic model structure of DCGAN.
+  ```yaml
+  PROJECT_NAME: MYTRAIN_1
 
-## about the visualization result
+  DATASET:
+    NAME: dataset/anime256
+    TRAIN_TEST_RATIO: 1.0
+  ```
 
-After your train, the whole log information was in `log/{PROJECT_NAME}.log`, and after each checkpoints, you could see the fake images and real images in `log/{PROJECT_NAME}/{iteration}` to check you GAN training process.
+The whole project comes from my [python work flow](https://github.com/luzhixing12345/python-template)
+
+> You may notice that there is a DCGAN in the project, yes, but after training, DCGAN does not perform well in anime faces generation. So I abort this GAN model and try to use WGAN. In the paper of DCGAN, there are some tricks such as lr and betas of optimizer which are declared in [configs/DCGAN.yaml](configs/DCGAN.yaml). And WGAN also use the basic model structure of DCGAN.
+
+## About the visualization result
+
+After your train, the whole log information was in `log/{PROJECT_NAME}.log`, and after each checkpoint, you could see the fake images and real images in `log/{PROJECT_NAME}/{iteration}` to help you check your GAN training process.
 
 You will get `walking_latent_space.gif` and `{PROJECT_NAME}_process.gif` in `log/{PROJECT_NAME}`
 
@@ -73,4 +103,4 @@ There are other evalution scores for GAN model. Such as Inception score, FID and
 
 But why I set this configuration to False by default ? That's because the IC score seems really strange in this project. It started from 4 and went to 3.7, 3.6, 3.5 and became lower and lower to 3.4.
 
-It should increase during the training process, but why ? I don't understand. Maybe because of the weakness of IC score ? I don't know.
+It should have increased during the training process, but why ? I don't understand. Maybe because of the weakness of IC score ? I don't know.
