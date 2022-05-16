@@ -9,6 +9,7 @@ import logging.config
 import os
 from torchvision import transforms
 import torch
+from matplotlib import pyplot as plt
 
 def set_logger(cfg):
     logging.config.fileConfig(cfg.LOG_CONFIGURATION)
@@ -41,8 +42,8 @@ class Logger:
         
     def log_losses(self,info, epoch):
         
-        self.d_loss.append(info['d_loss'])
-        self.g_loss.append(info['g_loss'])
+        self.d_loss.append(info['d_loss'].item())
+        self.g_loss.append(info['g_loss'].item())
         self.iterations.append(epoch)
         
     def log_images(self,info, epoch):
@@ -79,15 +80,22 @@ class Logger:
             
         with open(os.path.join(self.log_dir,'d_loss.txt'),'w') as f:
             for d_loss in self.d_loss:
-                f.write(str(d_loss.item())+'\n')
+                f.write(str(d_loss)+'\n')
         with open(os.path.join(self.log_dir,'g_loss.txt'),'w') as f:
             for g_loss in self.g_loss:
-                f.write(str(g_loss.item())+'\n')
+                f.write(str(g_loss)+'\n')
         with open(os.path.join(self.log_dir,'iterations.txt'),'w') as f:
             for iteration in self.iterations:
                 f.write(str(iteration)+'\n')
-        
-        print('successfully save losses')
+        # plot d_loss and g_loss in y axis and iterations in x axis
+        plt.plot(self.iterations, self.d_loss, label='d_loss')
+        plt.plot(self.iterations, self.g_loss, label='g_loss')
+        plt.xlabel('iterations')
+        plt.ylabel('loss')
+        plt.legend()
+        plt.savefig(os.path.join(self.log_dir,'loss.png'))
+        plt.close()
+        self.log('successfully save losses')
         
     def log(self,info):
         self.logger.info(info)
