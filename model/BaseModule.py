@@ -57,7 +57,6 @@ class BasicGAN(nn.Module):
         
         # evaluation
         self.max_inception_score = 0
-        self.best_model_path = ''
         
     def save_model(self,epoch):
         inception_score = self.evaluate_generator()
@@ -116,7 +115,7 @@ class BasicGAN(nn.Module):
         
         with torch.no_grad():
             fake_images = self.G(self.noise)
-            fake_images = fake_images.mul(0.5).add(0.5).cpu().data()
+            fake_images = fake_images.mul(0.5).add(0.5).cpu().data
             image_grid = utils.make_grid(fake_images, nrow=self.save_row_number)
             img_grid = np.transpose(img_grid.numpy(), (1, 2, 0))
             self.fake_images.append(image_grid)
@@ -125,6 +124,8 @@ class BasicGAN(nn.Module):
         gif_name = f'{self.cfg.MODEL.NAME}_epoch_{self.epochs}.gif'
         imageio.mimsave(os.path.join(self.log_dir, gif_name), self.fake_images)
         self.logger.log('Gif saved to {}'.format(os.path.join(self.log_dir, gif_name)))
+        
+        self.walking_latent_space()
 
     def evaluate_generator(self):
         sample_list = []
@@ -142,6 +143,7 @@ class BasicGAN(nn.Module):
         self.logger.log('Inception score: {}'.format(inception_score))
         return inception_score
     
+    # ABORT
     def save_best_model(self):
         
         # copy best model to current directory
@@ -152,3 +154,40 @@ class BasicGAN(nn.Module):
             self.logger.log('Copying best model to current directory done')
         else:
             self.logger.log('No best model found')
+        
+        
+    def walking_latent_space(self):
+        '''
+        walk through latent space using linear interpolation
+        '''
+        self.walk_step = self.cfg.WALKING_LATENT_SPACE.STEP
+        self.walk_number = self.cfg.WALKING_LATENT_SPACE.IMAGE_NUMBER
+        self.walk_row_number = self.cfg.WALKING_LATENT_SPACE.IMAGE_ROW_NUMBER
+        self.walking_fps = self.cfg.WALKING_LATENT_SPACE.IMAGE_FPS
+        
+        walking_space_images = []
+        
+        # interpolate between twe noise(z1, z2).
+        z1 = torch.randn(self.walk_number, self.G_input_size, 1, 1).to(self.device)
+        z2 = torch.randn(self.walk_number, self.G_input_size, 1, 1).to(self.device)
+        
+        alpha_increase = 1.0 / self.walk_step
+        alpha = 0
+        for _ in range(self.walk_step+1):
+            latent_vector = (1 - alpha) * z1 + alpha * z2
+            with torch.no_grad():
+                fake_im = self.G(latent_vector)
+                fake_im = fake_im.mul(0.5).add(0.5).cpu().data #denormalize
+            alpha = alpha + alpha_increase
+            image_grid = utils.make_grid(fake_im, nrow=self.walk_row_number)
+            img_grid = np.transpose(image_grid.numpy(), (1, 2, 0))
+            walking_space_images.append(img_grid)
+
+        imageio.mimsave(os.path.join(self.log_dir, 'walking_latent_space.gif'), walking_space_images)
+        self.logger.log('Walking latent space done, save to {}'.format(os.path.join(self.log_dir, 'walking_latent_space.gif')))
+        
+        
+
+
+        
+        

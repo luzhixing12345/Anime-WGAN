@@ -107,6 +107,15 @@ Sorry for my poor english, translate it into english if you really need it.
 - generated images
 - latent walk
 
+  |modelWGAN + anime256|WGAN + anime|
+  |:--:|:--:|
+  |![1](https://raw.githubusercontent.com/learner-lu/picbed/master/walking_latent_space.gif)|![asdoqi](https://raw.githubusercontent.com/learner-lu/picbed/master/asdoqi.gif)|
+
+  |WGANP + anime256|WGANP + anime|
+  |:--:|:--:|
+  |![asdhjono](https://raw.githubusercontent.com/learner-lu/picbed/master/asdhjono.gif)|![hcouga](https://raw.githubusercontent.com/learner-lu/picbed/master/hcouga.gif)|
+
+
 ## Conclusion
 
 ## Some extra work
@@ -145,3 +154,4 @@ knowledge:
 - https://www.zhihu.com/search?type=content&q=GAN%20%E6%A3%8B%E7%9B%98
 - https://zhuanlan.zhihu.com/p/58260684
 - https://make.girls.moe/#/
+- [latent walk](https://www.zhihu.com/search?type=content&q=latent%20walk)

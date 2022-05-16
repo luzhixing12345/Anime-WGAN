@@ -12,6 +12,7 @@ def default_argument_parser():
     
     parser.add_argument("--config-file", default="./configs/DCGAN.yaml" ,help="path to config file", type=str)
     parser.add_argument("--generator",'-g',help='path to generator model weights')
+    parser.add_argument('--separate','-s',action='store_true',help='whether to separate the images')
     parser.add_argument("opts", help="Modify config options using the command-line", default=None,
                         nargs=argparse.REMAINDER)
     return parser
@@ -24,7 +25,9 @@ def project_preprocess(cfg):
         cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
     if args.generator:
-        cfg.MODEL.G.PATH = args.generator  
+        cfg.MODEL.G.PATH = args.generator
+    if args.separate:
+        cfg.IMAGE.SEPARATE = True
     cfg.freeze()
     
     output_dir = cfg.OUTPUT_DIR
