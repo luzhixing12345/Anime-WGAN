@@ -12,6 +12,9 @@ class Generator(torch.nn.Module):
         # Output_dim = C (number of channels)
         self.main_module = nn.Sequential(
             
+            # Use nn.Upsample instead of nn.ConvTranspose2d to avoid Checkerboard Artifacts
+            # see more information about Checkboard Artifacts in https://distill.pub/2016/deconv-checkerboard/
+            
             # input is Z which size is (batch size x C x 1 X 1),going into a convolution
             # by default (32, 100, 1, 1)
             # project and reshape
@@ -20,41 +23,32 @@ class Generator(torch.nn.Module):
             nn.ReLU(True),
 
             # CONV1
-            # State (1024x4x4)
-            # nn.ConvTranspose2d(in_channels=dimension, out_channels=dimension//2, kernel_size=4, stride=2, padding=1),
-            #nn.PixelShuffle(2),
+            # State (32,1024,4,4)
             nn.Upsample(scale_factor=2),
             nn.Conv2d(in_channels=dimension, out_channels=dimension//2, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(num_features=dimension//2),
             nn.ReLU(True),
 
             # CONV2
-            # State (512x8x8)
-            #nn.ConvTranspose2d(in_channels=dimension//2, out_channels=dimension//4, kernel_size=4, stride=2, padding=1),
-            #nn.PixelShuffle(2),
+            # State (32,512,8,8)
             nn.Upsample(scale_factor=2),
             nn.Conv2d(in_channels=dimension//2, out_channels=dimension//4, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(num_features=dimension//4),
             nn.ReLU(True),
             
             # CONV3
-            # State (256x16x16)
-            #nn.ConvTranspose2d(in_channels=dimension//4, out_channels=dimension//8, kernel_size=4, stride=2, padding=1),
-            #nn.PixelShuffle(2),
+            # State (32,256,16,16)
             nn.Upsample(scale_factor=2),
             nn.Conv2d(in_channels=dimension//4, out_channels=dimension//8, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(num_features=dimension//8),
             nn.ReLU(True),
             
             # CONV4
-            # State (128x32x32)
-            #nn.ConvTranspose2d(in_channels=dimension//8, out_channels=channels, kernel_size=4, stride=2, padding=1)
-            #nn.PixelShuffle(2),
+            # State (32,128,32,32)
             nn.Upsample(scale_factor=2),
             nn.Conv2d(in_channels=dimension//8, out_channels=3, kernel_size=3, stride=1, padding=1),
             )
-            # output of main module --> Image (batch size x C x 64 x 64)
-            # default (32, 3, 64, 64)
+            # State (32,3,64,64)
 
         # output activation function is Tanh
         self.output = nn.Tanh()
@@ -70,28 +64,28 @@ class Discriminator(torch.nn.Module):
         # Input_dim = channels (CxHxW)
         # Output_dim = 1
         self.main_module = nn.Sequential(
-            # State (CxHxW)
+            # State (batch size x C x H x W)
             # default (32, 3, 64, 64)
             nn.Conv2d(in_channels=channels, out_channels=dimension, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(dimension, affine=True),
             nn.LeakyReLU(0.2, inplace=True),
 
-            # State (256x 32 x 32)
+            # State (32,256,32,32)
             nn.Conv2d(in_channels=dimension, out_channels=dimension*2, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(dimension*2, affine=True),
             nn.LeakyReLU(0.2, inplace=True),
 
-            # State (512x 16 x 16)
+            # State (32,512,16,16)
             nn.Conv2d(in_channels=dimension*2, out_channels=dimension*4, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(dimension*4, affine=True),
             nn.LeakyReLU(0.2, inplace=True),
             
-            # State (1024x 8 x 8)
+            # State (32,1024,8,8)
             nn.Conv2d(in_channels=dimension*4, out_channels=dimension*8, kernel_size=4, stride=2, padding=1),
             nn.InstanceNorm2d(dimension*8, affine=True),
             nn.LeakyReLU(0.2, inplace=True),
             
-            # State (2048x 4 x 4)
+            # State (32,2048,4,4)
             )
         
         

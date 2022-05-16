@@ -44,7 +44,7 @@ download the dataset zip and unzip it under `dataset` as `dataset/anime256` and 
 
 ### Train
 
-I design two model structure.
+I design two model structures.
 
 - run WGAN model as
 
@@ -58,9 +58,7 @@ I design two model structure.
   python train.py --config-file configs/WGANP.yaml
   ```
 
-in every epoch fake images and real images will be saved in `log/WGAN/{epoch}` in resolution of 64x64, you could check the training precess of WGAN at any time, and checkpoints will be saved in `checkpoints/WGAN`
-
-**ATTENTION**: Actually this project is a bit complex than its introduction, if you want to train a model by yourself, see more information in [train-info.md](./train-info.md)
+**ATTENTION**: Actually this project is a bit complex than its introduction, if you really want to run this code and train a model by yourself, see more information in [train-info.md](./train-info.md)
 
 ### Generate an anime picture
 
@@ -80,10 +78,27 @@ by default it will generate an 8x8 grid fake anime image under `./image`
 
 Arguments:
 
-- `-g`: short for generator, one argument with the name of the model weights
+- `-g`: short for generator, one argument with the path name of the model weights
 - `-s`: short for separate, no argument. Use `-s` to separate the grid image into 64 images
 
 ## Pretrained model
+
+- software
+
+  ```txt
+  OS: CentOS 7.5 Linux X86_64
+  Python: 3.7.14 (anaconda)
+  PyTorch: 1.10.1
+  ```
+
+- hardware
+
+  ```txt
+  CPU: Intel Xeon 6226R
+  GPU: Nvidia Tesla V100 16GB
+  ```
+
+see more information about [Supercomputing Center of Wuhan University](http://hpc.whu.edu.cn/index.htm)
 
 |model|dataset|Discriminator|Generator|
 |:--:|:--:|:--:|:--:|
@@ -92,7 +107,7 @@ Arguments:
 |WGANP|ANIME256|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_D_ANIME256.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_G_ANIME256.pth)|
 ||ANIME|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_D_ANIME.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_G_ANIME.pth)|
 
-If you don't want to train by yourself(about 36~48h), download the pretrained model G and move it under `./checkpoints`, then run generate.py as above to generate images, remember to use the correct path and model name.
+If you don't want to train by yourself(about 36~48h), download the pretrained model G and move it under `./checkpoints`, then run generate.py as above to generate images, **remember to use the correct path and model name.**
 
 > actually if you just want to generate an anime picture you only need to download G, but whatever, I uploaded all.
 
@@ -104,10 +119,19 @@ Sorry for my poor english, translate it into english if you really need it.
 
 ## Result
 
-- generated images
+- generated fake images
+
+  > Actually not all generated images seem well, I manually choose some images I like from `WGAN + anime256`
+
+  ![7](https://raw.githubusercontent.com/learner-lu/picbed/master/7.png) ![33](https://raw.githubusercontent.com/learner-lu/picbed/master/33.png) ![61](https://raw.githubusercontent.com/learner-lu/picbed/master/61.png) ![18](https://raw.githubusercontent.com/learner-lu/picbed/master/18.png) ![12](https://raw.githubusercontent.com/learner-lu/picbed/master/12.png) ![13](https://raw.githubusercontent.com/learner-lu/picbed/master/13.png)
+
+  well, cute girls, doesn't it?
+
 - latent walk
 
-  |modelWGAN + anime256|WGAN + anime|
+  > view my blog if you are not familiar with latent space
+
+  |WGAN + anime256|WGAN + anime|
   |:--:|:--:|
   |![1](https://raw.githubusercontent.com/learner-lu/picbed/master/walking_latent_space.gif)|![asdoqi](https://raw.githubusercontent.com/learner-lu/picbed/master/asdoqi.gif)|
 
@@ -115,12 +139,27 @@ Sorry for my poor english, translate it into english if you really need it.
   |:--:|:--:|
   |![asdhjono](https://raw.githubusercontent.com/learner-lu/picbed/master/asdhjono.gif)|![hcouga](https://raw.githubusercontent.com/learner-lu/picbed/master/hcouga.gif)|
 
+- loss curve and IC curve
+
+  actually loss curve doesn't mean a lot, because there are two model training together. And Inception score(IC) also has some problems to evluate the quality of the generated images.
+
+  > a little strange curve, I don't know why either ...
 
 ## Conclusion
 
-## Some extra work
+This is my first try of GAN, I have heard of it many times but never try to learn it. Concidentally here comes my final report of [data science introduction](https://github.com/luzhixing12345/data-science-introduction) lesson, and the final homework is to do something related to data. So that's a good chance to learn GAN ! I read some papers of GAN and it's really interesting.
 
-if you have any other question, leave your confusion in Issue and I will apply as soon as possible.
+[An article](https://zhuanlan.zhihu.com/p/24767059) from Zhihu inspired me that why not try to generate my own anime faces/avater? So I start to code.
+
+Actually I must admit that my pretrained model doesn't perform as well as I excepted, there maybe many excellent model structures or projects which can solve this problem well today. However, the origin purposal of this project is just to learn something about GAN, I choose to use WGAN-GP for it's wonderfull mathematical derivation, I'd like to finish my own project instead of just git clone an excellent project and run without doing anything.
+
+Especialy thank to [pytorch-wgan](https://github.com/Zeleni9/pytorch-wgan), really helps me a lot. Thank you so much.
+
+Actually at first I want to generate 256x256 images, that's why I crawled 256x256 images and made that dataset. But as the size of image multiply 4, the model performs extremly bad. Maybe I need a better model struture. I've tried to use residual block but it doesn't work well.
+
+If you are interested in this part, you could check in branch `model256` for more details.
+
+If you have any other question, leave your confusion in Issue and I will apply as soon as possible.
 
 ## Relevant reference
 

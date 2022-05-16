@@ -1,5 +1,18 @@
 # Train-information
 
+
+
+After each epoch, fake images and real images will be saved in `log/WGAN/{epoch}` in resolution of 64x64, you could check the training precess at any time, and checkpoints will be saved in `checkpoints/WGAN`
+
+After training, it will generate some fake images in `./images`, and you could also get the `walking_latent_space.gif` of the finial model and `WGAN_process.gif` during the whole GAN training process.
+
+All information will be saved
+
+
+
+
+
+
 ## About training configuration
 
 I don't like to use parameters carried by long command. All the configuration infomation is in [config/defaults.py](config/defaults.py). I think the name of each parameter is clear enough for you to understand what it infers. You may change as you like, batch size, epochs and so on.

@@ -20,6 +20,7 @@ def main():
     model = build_model(cfg)
     model.train(train_dataloader)
     model.save_gif()
+    model.generator_images()
     print('\nDone!')
 
 if __name__ == '__main__':

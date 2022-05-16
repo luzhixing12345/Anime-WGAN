@@ -39,18 +39,19 @@ class BasicGAN(nn.Module):
         # some default parameters
         self.device = cfg.MODEL.DEVICE
         self.model_checkpoint_dir = os.path.join(cfg.MODEL.CHECKPOINT_DIR, cfg.PROJECT_NAME)
-        self.checkpoint_freq = cfg.SOLVER.CHECKPOINT_FREQ # default 1000
+        self.checkpoint_freq = cfg.SOLVER.CHECKPOINT_FREQ
         self.log_dir = os.path.join(cfg.OUTPUT_DIR, cfg.PROJECT_NAME)
         self.logger = Logger(cfg)
         self.number_of_images = self.cfg.IMAGE.NUMBER
         self.image_save_path = cfg.IMAGE.SAVE_PATH
+        self.image_separate = cfg.IMAGE.SEPARATE # default False, use -s to separate
         self.evaluate_iteration = cfg.SOLVER.EVALUATE_ITERATION
         self.evaluate_batch = cfg.SOLVER.EVALUATE_BATCH
         if not os.path.exists(self.model_checkpoint_dir):
             os.makedirs(self.model_checkpoint_dir)
 
         # change process
-        self.fake_images = []
+        self.GAN_process = [] # record in each checkpoint for self.G(self.noise)
         self.save_number = cfg.IMAGE.SAVE_NUMBER
         self.save_row_number = cfg.IMAGE.SAVE_ROW_NUMBER
         self.noise = torch.randn(self.save_number, self.G_input_size,1,1).to(self.device)
@@ -62,8 +63,8 @@ class BasicGAN(nn.Module):
         inception_score = self.evaluate_generator()
         if inception_score > self.max_inception_score:
             self.max_inception_score = inception_score
-            self.best_model_path = os.path.join(self.model_checkpoint_dir, f'{self.cfg.PROJECT_NAME}_D_epoch_{epoch}.pth')
-            self.logger.log("New best model! Saving to {}".format(self.best_model_path))
+            # self.best_model_path = os.path.join(self.model_checkpoint_dir, f'{self.cfg.PROJECT_NAME}_D_epoch_{epoch}.pth')
+            # self.logger.log("New best model! Saving to {}".format(self.best_model_path))
         
         torch.save(self.G.state_dict(), os.path.join(self.model_checkpoint_dir, '{}_G_epoch_{}.pth'.format(self.cfg.PROJECT_NAME,epoch)))
         torch.save(self.D.state_dict(), os.path.join(self.model_checkpoint_dir, '{}_D_epoch_{}.pth'.format(self.cfg.PROJECT_NAME,epoch)))
@@ -92,17 +93,18 @@ class BasicGAN(nn.Module):
         if not os.path.exists(self.image_save_path):
             os.makedirs(self.image_save_path)   
             
-        fake_images = fake_images.mul(0.5).add(0.5).squeeze().cpu()
+        fake_images = fake_images.mul(0.5).add(0.5).cpu()
         
-        image_grid = utils.make_grid(fake_images, nrow=self.save_row_number)
+        if self.image_separate:
+            # save images one by one
+            toPIL = transforms.ToPILImage()
+            for i, image in enumerate(fake_images):
+                image = toPIL(image)
+                image.save(os.path.join(self.image_save_path, '{}.png'.format(i)))
+        else:
+            image_grid = utils.make_grid(fake_images, nrow=self.save_row_number)
+            utils.save_image(image_grid, os.path.join(self.image_save_path, '{}.png'.format(self.cfg.PROJECT_NAME)))
         
-        utils.save_image(image_grid, os.path.join(self.image_save_path, '{}.png'.format(self.cfg.PROJECT_NAME)))
-        # save images one by one
-        # toPIL = transforms.ToPILImage()
-        # for i, image in enumerate(fake_images):
-        #     image = image.mul(0.5).add(0.5)
-        #     image = toPIL(image)
-        #     image.save(os.path.join(self.image_save_path, '{}.png'.format(i)))
 
         
     def train(self):
@@ -117,14 +119,15 @@ class BasicGAN(nn.Module):
             fake_images = self.G(self.noise)
             fake_images = fake_images.mul(0.5).add(0.5).cpu().data
             image_grid = utils.make_grid(fake_images, nrow=self.save_row_number)
-            img_grid = np.transpose(img_grid.numpy(), (1, 2, 0))
-            self.fake_images.append(image_grid)
+            image_grid = np.transpose(image_grid.numpy(), (1, 2, 0))
+            self.GAN_process.append(image_grid)
         
     def save_gif(self):
-        gif_name = f'{self.cfg.MODEL.NAME}_epoch_{self.epochs}.gif'
-        imageio.mimsave(os.path.join(self.log_dir, gif_name), self.fake_images)
+        gif_name = f'{self.cfg.PROJECT_NAME}_process.gif'
+        imageio.mimsave(os.path.join(self.log_dir, gif_name), self.GAN_process)
         self.logger.log('Gif saved to {}'.format(os.path.join(self.log_dir, gif_name)))
         
+        # only walking in the latent space for the finial model weight
         self.walking_latent_space()
 
     def evaluate_generator(self):
@@ -183,8 +186,8 @@ class BasicGAN(nn.Module):
             img_grid = np.transpose(image_grid.numpy(), (1, 2, 0))
             walking_space_images.append(img_grid)
 
-        imageio.mimsave(os.path.join(self.log_dir, 'walking_latent_space.gif'), walking_space_images)
-        self.logger.log('Walking latent space done, save to {}'.format(os.path.join(self.log_dir, 'walking_latent_space.gif')))
+        imageio.mimsave(os.path.join(self.image_save_path, 'walking_latent_space.gif'), walking_space_images)
+        self.logger.log('Walking latent space done, save to {}'.format(os.path.join(self.image_save_path, 'walking_latent_space.gif')))
         
         
 
