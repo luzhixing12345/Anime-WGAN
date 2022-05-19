@@ -184,16 +184,10 @@ knowledge:
 - [WGAN-GP](https://github.com/EmilienDupont/wgan-gp)
 - https://zhuanlan.zhihu.com/p/28407948?ivk_sa=1024320u
 - [evaluation-index](https://zhuanlan.zhihu.com/p/432965561)
-- https://github.com/bchao1/Anime-Face-Dataset
-- https://github.com/jayleicn/animeGAN
-- [Generative adversial nets](https://arxiv.org/abs/1406.2661) was published in 2014 NIPSd
-- [DCGAN](https://arxiv.org/pdf/1511.06434.pdf) which using CNN in GAN has made a huge improvement.
-- https://github.com/nagadomi/lbpcascade_animeface
-- https://github.com/xiaoyou-bilibili/anime_avatar_gen
 - https://zhuanlan.zhihu.com/p/25071913
 - https://zhuanlan.zhihu.com/p/58260684
-- https://arxiv.org/pdf/1708.05509.pdf
-- [qipan](https://distill.pub/2016/deconv-checkerboard/)
+- [生成ANIMEfaces](https://arxiv.org/pdf/1708.05509.pdf)
+- [checkerboard](https://distill.pub/2016/deconv-checkerboard/)
 - https://www.zhihu.com/search?type=content&q=GAN%20%E6%A3%8B%E7%9B%98
 - https://zhuanlan.zhihu.com/p/58260684
 - https://make.girls.moe/#/

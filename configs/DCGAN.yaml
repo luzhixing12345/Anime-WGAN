@@ -2,7 +2,7 @@
 PROJECT_NAME: DCGAN
 
 DATASET:
-  NAME: dataset/anime
+  NAME: dataset/anime256
   TRAIN_TEST_RATIO: 1.0
 
 MODEL:
