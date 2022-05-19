@@ -6,7 +6,7 @@
 
 TODO: an online website
 
-[Bilibili video](123)
+[Bilibili video](https://www.bilibili.com/video/BV1cr4y147s8)
 
 ## Requirements
 
