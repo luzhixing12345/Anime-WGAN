@@ -1,4 +1,0 @@
-yacs
-imageio
-scipy
-matplotlib

@@ -1,0 +1,9 @@
+
+*.py
+*.png
+*.jpg
+*.zip
+*.md
+*.pth
+*.txt
+zipdataset
