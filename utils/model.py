@@ -12,7 +12,6 @@ from model import *
 def build_model(cfg):
 
     total_model = {
-        'GAN': GAN,
         'DCGAN': DCGAN,
         'WGAN': WGAN,
         'WGANP': WGANP,
