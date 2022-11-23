@@ -9,6 +9,7 @@
 
 from config.config import get_cfg
 from utils import *
+from model.BaseModule import BasicGAN
 
 def main():
     
@@ -17,9 +18,9 @@ def main():
 
     train_dataloader = preprare_dataloader(cfg)
     
-    model = build_model(cfg)
+    model:BasicGAN = build_model(cfg)
     model.train(train_dataloader)
-    model.generator_images()
+    model.generate_images()
     model.save_gif()
 
 if __name__ == '__main__':

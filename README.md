@@ -1,6 +1,6 @@
 # Anime-WGAN-GP
 
-## Inroduction: Using WGAN-GP to generate anime faces
+## Introduction: Using WGAN-GP to generate anime faces
 
 ![WGAN64_anime](https://raw.githubusercontent.com/learner-lu/picbed/master/WGAN64_anime.png)
 

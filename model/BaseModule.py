@@ -12,7 +12,6 @@ import torch
 import torch.nn as nn
 import imageio
 import os
-import shutil
 from utils.logger import Logger
 from utils.evaluate import get_inception_score
 from torchvision import transforms,utils
