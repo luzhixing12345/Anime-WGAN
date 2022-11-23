@@ -1,14 +1,12 @@
 # Anime-WGAN-GP
 
-[english README](en-README.md)
-
-[模型生成动漫图片网站](https://visual.kamilu.top) (more [info](https://github.com/luzhixing12345/pytorch-model-deployment/tree/web-server))
-
-[Bilibili video](https://www.bilibili.com/video/BV1cr4y147s8)
-
 ## Introduction: Using WGAN-GP to generate anime faces
 
 ![WGAN64_anime](https://raw.githubusercontent.com/learner-lu/picbed/master/WGAN64_anime.png)
+
+[Online website](https://visual.kamilu.top) (see more [info](https://github.com/luzhixing12345/pytorch-model-deployment/tree/web-server))
+
+[Bilibili video](https://www.bilibili.com/video/BV1cr4y147s8)
 
 ## Requirements
 
@@ -30,25 +28,23 @@
 
 - [anime256](https://github.com/luzhixing12345/anime-face-dataset/releases/download/v0.0.1/anime256.zip)
 
-  整个数据集包含 2.7w+ 分辨率为 256x256 的高质量动漫人脸
-
-  > https://github.com/luzhixing12345/anime-face-dataset
+  I crawled pictures with high resolution and manually removed some unsatisfied pictures. The whole dataset contains 2.7w+ anime faces with resolution of 256x256 in high quality
 
 - [anime](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.2/faces.zip)
 
-  另一个数据集，5w+，分辨率96x96，质量不错
+  Another dataset I found, 5w+, resolution of 96x96, in good quality
 
-下载zip并且解压到 `./dataset` 文件夹下, `dataset/anime256` and `dataset/anime`
+download the dataset zip and unzip it under `dataset` as `dataset/anime256` and `dataset/anime`
 
-> 如果下载过慢可以使用[Github proxy](https://ghproxy.com/)加速
+> try to use [Github proxy](https://ghproxy.com/) if too slow
 >
-> 这两个数据集下载任意一个用于训练都可以
+> see [more information about anime datasets](https://github.com/luzhixing12345/anime-face-dataset)
 
 ## Use
 
 ### Train
 
-我设计了两个模型结构, `WGAN` 和 `WGANP`, 这两个模型最主要的区别在于Generator增大图片尺寸的方式,你可以通过这篇文章[反卷积存在的问题](https://distill.pub/2016/deconv-checkerboard/)了解到为什么要这么做
+I design two model structures.
 
 - run WGAN model as
 
@@ -62,9 +58,9 @@
   python train.py --config-file configs/WGANP.yaml
   ```
 
-**注意**: 如果需要自己训练模型,请参阅[更多训练信息](./train-info.md),当然你可以在后面找到提供的预训练模型
+**ATTENTION**: Actually this project is a bit complex than its introduction, if you really want to run this code and train a model by yourself, see more information in [train-info.md](./en-train-info.md)
 
-### Generate images
+### Generate an anime picture
 
 - use WGAN model as
 
@@ -78,17 +74,12 @@
   python generate.py --config-file configs/WGANP.yaml -g checkpoints/WGANP/WGANP_G_epoch_39999.pth.pth
   ```
 
-默认情况下,它会在 `./images` 下生成一个 8x8 网格的动漫图片
+by default it will generate an 8x8 grid fake anime image under `./images`
 
-其他:
+Arguments:
 
-- `-g`: generator 的缩写,一个参数是模型权重的路径名
-
-  **这里的模型是指生成器G的模型**
-
-- `-s`: separate 的缩写,没有参数
-
-  可以使用`-s`将将一张大图拆分成每一张小图
+- `-g`: short for generator, one argument with the path name of the model weights
+- `-s`: short for separate, no argument. Use `-s` to separate the grid image into 64 images
 
 ## Pretrained model
 
@@ -107,6 +98,8 @@
   GPU: Nvidia Tesla V100 16GB
   ```
 
+see more information about [Supercomputing Center of Wuhan University](http://hpc.whu.edu.cn/index.htm)
+
 |model|dataset|Discriminator|Generator|
 |:--:|:--:|:--:|:--:|
 |WGAN|ANIME256|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGAN_D_ANIME256.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGAN_G_ANIME256.pth)|
@@ -114,25 +107,29 @@
 |WGANP|ANIME256|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_D_ANIME256.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_G_ANIME256.pth)|
 ||ANIME|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_D_ANIME.pth)|[download](https://github.com/luzhixing12345/Anime-WGAN/releases/download/v0.0.4/WGANP_G_ANIME.pth)|
 
-如果不想自己训练（大约36~48h）,可以下载预训练好的模型G并将其移动到`./checkpoints`下,然后按照上文`Generate images`生成图片, **注意修改后面的生成器G的模型路径**
+If you don't want to train by yourself(about 36~48h), download the pretrained model G and move it under `./checkpoints`, then run generate.py as above to generate images, **remember to use the correct path name.**
 
-> 事实上如果你只是想生成一张动漫图片你只需要下载G, 判别器D在生成图片的过程中并没有用到
+> actually if you just want to generate an anime picture you only need to download G, but whatever, I uploaded all.
 
 ## Detail information about this project
 
-我在[博客](https://luzhixing12345.github.io/tags/GAN/)中记录了我对GAN、DCGAN、WGAN-CP、WGAN-GP的理解，GAN的评估方法,如果对GAN尚不足够了解可以参考这一部分
+If you are familiar with **Chinese**, you could visit [my blog](https://luzhixing12345.github.io/tags/GAN/) which recorded my understanding of GAN, DCGAN, WGAN-CP, WGAN-GP, the evaluation method of GAN, and the whole project.
+
+Sorry for my poor english, translate it into english if you really need it.
 
 ## Result
 
 - generated fake images
 
-  > 其实不是所有生成的图片都好看,我手动选择了一些我喜欢的图片,使用模型 `WGAN + anime256`
+  > Actually not all generated images seem well, I manually choose some images I like from `WGAN + anime256`
 
   ![7](https://raw.githubusercontent.com/learner-lu/picbed/master/7.png) ![33](https://raw.githubusercontent.com/learner-lu/picbed/master/33.png) ![61](https://raw.githubusercontent.com/learner-lu/picbed/master/61.png) ![18](https://raw.githubusercontent.com/learner-lu/picbed/master/18.png) ![12](https://raw.githubusercontent.com/learner-lu/picbed/master/12.png) ![13](https://raw.githubusercontent.com/learner-lu/picbed/master/13.png)
 
+  well, cute girls, doesn't it?
+
 - walking latent space
 
-  > 如果尚不了解潜在空间探索可以参考[博客](https://luzhixing12345.github.io/2022/05/18/GAN/GAN%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3(%E4%BA%8C)/)
+  > view my blog if you are not familiar with latent space
 
   |WGAN + anime256|WGAN + anime|
   |:--:|:--:|
@@ -144,7 +141,7 @@
 
 - GAN training process
 
-  > 对于相同的噪声输入,不同生成图像的过程
+  > for the same noise input, the process of different generated images
 
   |WGAN + anime256|WGAN + anime|
   |:--:|:--:|
@@ -156,17 +153,17 @@
 
 ## Conclusion
 
-这是我第一次尝试GAN,久闻大名但从未尝试学习它。恰逢[数据科学导论](https://github.com/luzhixing12345/data-science-introduction)课期末报告，期末作业是做一些与机器学习相关的事情。所以这是学习 GAN 的好机会！于是看了一些GAN的论文，真的很有意思。
+This is my first try of GAN, I have heard of it many times but never try to learn it. Concidentally here comes my final report of [data science introduction](https://github.com/luzhixing12345/data-science-introduction) lesson, and the final homework is to do something related to data. So that's a good chance to learn GAN ! I read some papers of GAN and it's really interesting.
 
-[GAN学习指南：从原理入门到制作生成Demo](https://zhuanlan.zhihu.com/p/24767059)启发了尝试生成自己的动漫头像
+[An article](https://zhuanlan.zhihu.com/p/24767059) from Zhihu inspired me that why not try to generate my own anime faces/avatar? So I start to code.
 
-实际上我必须承认,我的预训练模型并没有像我期待的那样表现出色,时至今日有很多优秀的模型在生成图像上具有更好的效果,比如diffusion.
+Actually I must admit that my pretrained model doesn't perform as well as I excepted, there maybe many excellent model structures or projects which can solve this problem well today. However, the origin purposal of this project is just to learn something about GAN, I choose to use WGAN-GP for it's wonderfull mathematical derivation, I'd like to finish my own project instead of just git clone an excellent project and run without doing anything.
 
-这个项目的最初目的只是为了学习一些关于 GAN 的东西，我选择使用 WGAN-GP 是因为它的数学推导很棒，我想尝试动手写一下而不是只是双击运行,那样稍显无趣.
+Especialy thank to [pytorch-wgan](https://github.com/Zeleni9/pytorch-wgan), really helps me a lot. Thank you so much.
 
-特别感谢 [pytorch-wgan](https://github.com/Zeleni9/pytorch-wgan),绝大部分代码都参考自这个项目
+Actually at first I want to generate 256x256 images, that's why I crawled 256x256 images and made that dataset. But as the size of image multiply 4, the model performs extremly bad. Maybe I need a better model struture. I've tried to use residual block but it doesn't work well.
 
-其实一开始我想生成 256x256 的图像，这就是为什么我爬取 256x256 图像并制作该数据集的原因。但随着图像尺寸乘以 4，模型表现极差。也许我需要一个更好的模型结构。我试过使用residual block ,但效果不佳。
+If you have any other question, leave your confusion in Issue and I will apply as soon as possible.
 
 ## Relevant reference
 
