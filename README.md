@@ -4,7 +4,7 @@
 
 ![WGAN64_anime](https://raw.githubusercontent.com/learner-lu/picbed/master/WGAN64_anime.png)
 
-[Online website](https://visual.kamilu.top)
+[Online website](https://visual.kamilu.top) (closed now, see more [info](https://github.com/luzhixing12345/pytorch-model-deployment/tree/web-server) if you are interested in it)
 
 [Bilibili video](https://www.bilibili.com/video/BV1cr4y147s8)
 
