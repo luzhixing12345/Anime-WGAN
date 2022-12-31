@@ -84,7 +84,7 @@ class BasicGAN(nn.Module):
         #     self.D.load_state_dict(torch.load(D_model_path))
         #     print("D_model loaded from {}".format(D_model_path))
         if G_model_path != "":
-            self.G.load_state_dict(torch.load(G_model_path))
+            self.G.load_state_dict(torch.load(G_model_path,map_location=torch.device(self.cfg.MODEL.DEVICE)))
             self.logger.log("G_model loaded from {}".format(G_model_path))
 
     
