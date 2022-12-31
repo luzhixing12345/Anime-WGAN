@@ -2,3 +2,8 @@ zipdataset
 dataset/anime
 dataset/MNIST
 *.zip
+images/
+checkpoints/WGAN_G_ANIME256.pth
+checkpoints/WGANP_G_ANIME256.pth
+/*/__pycache__
+log/

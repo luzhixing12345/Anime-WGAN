@@ -2,7 +2,7 @@
 
 [english README](en-README.md)
 
-[模型生成动漫图片网站](https://visual.kamilu.top) (more [info](https://github.com/luzhixing12345/pytorch-model-deployment/tree/web-server))
+[Live Demo](https://visual.kamilu.top) (more [info](https://github.com/luzhixing12345/pytorch-model-deployment/tree/web-server))
 
 [Bilibili video](https://www.bilibili.com/video/BV1cr4y147s8)
 
@@ -69,13 +69,19 @@
 - use WGAN model as
 
   ```bash
-  python generate.py --config-file configs/WGAN.yaml -g checkpoints/WGAN/WGAN_G_epoch_39999.pth.pth
+  python generate.py --config-file configs/WGAN.yaml -g checkpoints/WGAN/WGAN_G_epoch_39999.pth
   ```
 
 - use WGANP model as
 
   ```bash
-  python generate.py --config-file configs/WGANP.yaml -g checkpoints/WGANP/WGANP_G_epoch_39999.pth.pth
+  python generate.py --config-file configs/WGANP.yaml -g checkpoints/WGANP/WGANP_G_epoch_39999.pth
+  ```
+
+- use CPU
+
+  ```bash
+  python generate.py --config-file configs/WGANP.yaml -g checkpoints/WGANP_G_ANIME256.pth MODEL.DEVICE cpu
   ```
 
 默认情况下,它会在 `./images` 下生成一个 8x8 网格的动漫图片
