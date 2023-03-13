@@ -1,14 +1,12 @@
 # Anime-WGAN-GP
 
+![WGAN64_anime](https://raw.githubusercontent.com/learner-lu/picbed/master/WGAN64_anime.png)
+
 [english README](en-README.md)
 
 [Live Demo](https://visual.kamilu.top) (more [info](https://github.com/luzhixing12345/pytorch-model-deployment/tree/web-server))
 
 [Bilibili video](https://www.bilibili.com/video/BV1cr4y147s8)
-
-## Introduction: Using WGAN-GP to generate anime faces
-
-![WGAN64_anime](https://raw.githubusercontent.com/learner-lu/picbed/master/WGAN64_anime.png)
 
 ## Requirements
 
@@ -48,7 +46,7 @@
 
 ### Train
 
-我设计了两个模型结构, `WGAN` 和 `WGANP`, 这两个模型最主要的区别在于Generator增大图片尺寸的方式,你可以通过这篇文章[反卷积存在的问题](https://distill.pub/2016/deconv-checkerboard/)了解到为什么要这么做
+设计了两个模型结构, `WGAN` 和 `WGANP`, 这两个模型最主要的区别在于Generator增大图片尺寸的方式,你可以通过这篇文章[反卷积存在的问题](https://distill.pub/2016/deconv-checkerboard/)了解到为什么要这么做
 
 - run WGAN model as
 
@@ -126,13 +124,13 @@
 
 ## Detail information about this project
 
-我在[博客](https://luzhixing12345.github.io/tags/GAN/)中记录了我对GAN、DCGAN、WGAN-CP、WGAN-GP的理解，GAN的评估方法,如果对GAN尚不足够了解可以参考这一部分
+在[博客](https://luzhixing12345.github.io/tags/GAN/)中记录了对GAN、DCGAN、WGAN-CP、WGAN-GP的理解，GAN的评估方法,如果对GAN尚不足够了解可以参考这一部分
 
 ## Result
 
 - generated fake images
 
-  > 其实不是所有生成的图片都好看,我手动选择了一些我喜欢的图片,使用模型 `WGAN + anime256`
+  > 其实不是所有生成的图片都好看,手动选择了一些喜欢的图片,使用模型 `WGAN + anime256`
 
   ![7](https://raw.githubusercontent.com/learner-lu/picbed/master/7.png) ![33](https://raw.githubusercontent.com/learner-lu/picbed/master/33.png) ![61](https://raw.githubusercontent.com/learner-lu/picbed/master/61.png) ![18](https://raw.githubusercontent.com/learner-lu/picbed/master/18.png) ![12](https://raw.githubusercontent.com/learner-lu/picbed/master/12.png) ![13](https://raw.githubusercontent.com/learner-lu/picbed/master/13.png)
 
@@ -162,17 +160,17 @@
 
 ## Conclusion
 
-这是我第一次尝试GAN,久闻大名但从未尝试学习它。恰逢[数据科学导论](https://github.com/luzhixing12345/data-science-introduction)课期末报告，期末作业是做一些与机器学习相关的事情。所以这是学习 GAN 的好机会！于是看了一些GAN的论文，真的很有意思。
+这是第一次尝试GAN,久闻大名但从未尝试学习它。恰逢[数据科学导论](https://github.com/luzhixing12345/data-science-introduction)课期末报告，期末作业是做一些与机器学习相关的事情。所以这是学习 GAN 的好机会！于是看了一些GAN的论文，真的很有意思。
 
 [GAN学习指南：从原理入门到制作生成Demo](https://zhuanlan.zhihu.com/p/24767059)启发了尝试生成自己的动漫头像
 
-实际上我必须承认,我的预训练模型并没有像我期待的那样表现出色,时至今日有很多优秀的模型在生成图像上具有更好的效果,比如diffusion.
+实际上必须承认,的预训练模型并没有像期待的那样表现出色,时至今日有很多优秀的模型在生成图像上具有更好的效果,比如diffusion.
 
-这个项目的最初目的只是为了学习一些关于 GAN 的东西，我选择使用 WGAN-GP 是因为它的数学推导很棒，我想尝试动手写一下而不是只是双击运行,那样稍显无趣.
+这个项目的最初目的只是为了学习一些关于 GAN 的东西，选择使用 WGAN-GP 是因为它的数学推导很棒，想尝试动手写一下而不是只是双击运行,那样稍显无趣.
 
 特别感谢 [pytorch-wgan](https://github.com/Zeleni9/pytorch-wgan),绝大部分代码都参考自这个项目
 
-其实一开始我想生成 256x256 的图像，这就是为什么我爬取 256x256 图像并制作该数据集的原因。但随着图像尺寸乘以 4，模型表现极差。也许我需要一个更好的模型结构。我试过使用residual block ,但效果不佳。
+其实一开始想生成 256x256 的图像，这就是为什么爬取 256x256 图像并制作该数据集的原因。但随着图像尺寸乘以 4，模型表现极差。也许需要一个更好的模型结构。试过使用residual block ,但效果不佳。
 
 ## Relevant reference
 

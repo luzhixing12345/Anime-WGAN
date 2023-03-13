@@ -114,7 +114,6 @@ class DCGAN(BasicGAN):
         generator_iter = 0
 
         for epoch in range(self.epochs):
-            
             for i, images in enumerate(train_loader):
                 ############################
                 # Check if round number of batches

@@ -7,3 +7,6 @@ checkpoints/WGAN_G_ANIME256.pth
 checkpoints/WGANP_G_ANIME256.pth
 /*/__pycache__
 log/
+.vscode/
+dataset/*
+checkpoints/*
