@@ -122,10 +122,6 @@ Anime-WGAN-GP 是一个使用 WGAN-GP 来生成动漫头像的项目
 
 > 事实上如果你只是想生成一张动漫图片你只需要下载G, 判别器D在生成图片的过程中并没有用到
 
-## Detail information about this project
-
-在[博客](https://luzhixing12345.github.io/tags/GAN/)中记录了对GAN、DCGAN、WGAN-CP、WGAN-GP的理解,GAN的评估方法,如果对GAN尚不足够了解可以参考这一部分
-
 ## Result
 
 - generated fake images
