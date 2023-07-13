@@ -1,0 +1,258 @@
+#---------------------------
+#    Zood Configuration
+# Author: kamilu
+# Github: https://github.com/luzhixing12345/zood
+#
+# 配置指南: https://luzhixing12345.github.io/zood/
+# 你可以从指南中获得更详细的说明
+#
+# Guide: https://luzhixing12345.github.io/zood/
+# You can get more detailed help from the guide
+#---------------------------
+
+
+#---------------------------
+# 全局
+# Global
+#---------------------------
+
+# 用于浏览器标签的图标
+# Icon for browser tab
+favicon: https://raw.githubusercontent.com/learner-lu/picbed/master/logo.png
+
+# 标题的名字
+title: Document
+
+# 生成的markdown文件夹名
+markdown_folder: md-docs
+
+# 生成的html文件夹名
+html_folder: docs
+
+options:
+
+  # 是否启用dark主题
+  enable_change_mode: true
+
+  # 是否开启复制代码的按钮
+  enable_copy_code: true
+
+  # 是否启用代码高亮
+  enable_highlight: true
+
+  # 是否启用右侧上一个下一个
+  enable_next_front: true
+
+  # 是否启用目录导航栏
+  enable_navigator: true
+
+  # 是否启用查询搜索
+  enable_search:
+    enable: false
+    search_scope: []
+
+  # 是否保留图片的标题
+  enable_picture_title: false
+
+  # 图片是否可以被放大预览
+  enable_picture_preview: true
+
+  # 支持 mermaid
+  enable_mermaid: false
+
+  # 使用 github 图标
+  enable_github: true
+
+  # 支持 latex 数学公式
+  enable_latex: true
+
+# 页面布局
+position:
+
+  # markdown左侧距离
+  markdown_body_left: "20%"
+  
+  # markdown右侧距离
+  markdown_body_right: "20%"
+
+  # 搜索栏顶部距离
+  search_top: "8%"
+
+  # 目录左侧距离
+  dir_left: "6%"
+
+  # 目录顶部距离
+  dir_top: "15%"
+
+  # 目录宽度
+  dir_width: "10%"
+
+  # 按钮的右侧距离
+  button_right: 6%;
+
+  # 按钮顶部距离
+  button_top: 60%;
+
+  # 按钮宽度
+  button_width: 10%;
+
+  # 导航栏距离左侧距离 -> 左对齐
+  navigator_left: 83%
+
+  # 导航栏顶部距离
+  navigator_top: 10%
+
+  # 导航栏宽度
+  navigator_max_width: 15%
+
+  # 一级条目上下间距
+  dir_item_margin: "25px"
+
+  # 一级条目左间距
+  dir_item_margin_left: "-10px"
+
+  # 二级条目上下间距
+  dir_second_item_margin: "0px"
+
+  # 二级条目左间距
+  dir_second_item_margin_left: "5px"
+
+  navigator_margin: "10px"
+
+  navigator_item_margin_left: "-10px"
+
+  # 图片被放大后的宽度
+  image_preview_width: "60%"
+
+# 主题颜色配置,其他不生效的地方请使用自定义 css 解决,配色可以在下方链接中获得启发
+# Theme color, please use custom CSS to solve other colors, color schema can be inspired by the links below
+# See: https://www.webdesignrankings.com/resources/lolcolors/
+color:
+  # body 背景色
+  # Color of body background
+  body_bg_color: "#eee"
+  # 暗色模式下的 body 背景色,下同
+  # Color in dark mode, the same below
+  body_bg_color_dark: "#181c27"
+
+  # markdown部分的背景色
+  markdown_bg_color: "#fff"
+  markdown_bg_color_dark: "#252D38"
+
+  # markdown部分阴影
+  # 其他阴影参考: https://getcssscan.com/css-box-shadow-examples
+  markdown_box_shadow: "rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px"
+
+  # 图片阴影
+  # 其他阴影参考: https://getcssscan.com/css-box-shadow-examples
+  markdown_picture_box_shadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"
+
+  # 代码段的背景颜色
+  markdown_code_bg_color: "#161823"
+  markdown_code_bg_color_dark: "#303030"
+
+  # 代码段的注释颜色
+  markdown_code_comment: '#6A9955'
+  markdown_code_comment_dark: '#6A9955'
+
+  # 代码段的文字颜色
+  markdown_code_text : '#fff'
+  markdown_code_text_dark : '#fff'
+
+  # 代码段被选中时的背景颜色
+  markdown_code_selected : "#318FFE"
+
+  # 代码段被选中时的文本颜色
+  markdown_code_color_selected : "#fff"
+
+  # 代码段括号颜色
+  markdown_code_punctuation: "#E3C91C"
+
+  # 代码段常量,标签颜色
+  markdown_code_constant :  "#e1e1e1"
+  markdown_code_constant_dark :  "#e1e1e1"
+
+  # 代码段字符串颜色
+  markdown_code_string: "#D89B6F"
+  markdown_code_string_dark: "#D89B6F"
+
+  # 代码段运算符颜色
+  markdown_code_operator: "#fff"
+  markdown_code_operator_dark: "#fff"
+
+  # 代码段关键字颜色
+  markdown_code_keyword: "#569CD6"
+  markdown_code_keyword_dark: "#569CD6"
+
+  # 代码段预处理颜色
+  markdown_code_directive_keyword: "#C586C0"
+  markdown_code_directive_keyword_dark: "#C586C0"
+
+  # 代码段函数颜色
+  markdown_code_function: "#EAE378"
+  markdown_code_function_dark: "#EAE378"
+
+  # 代码段类颜色
+  markdown_code_class: "#59B294"
+  markdown_code_class_dark: "#59B294"
+
+  # json key颜色
+  markdown_code_jsonkey: "#9CDCFE"
+  markdown_code_jsonkey_dark: "#9CDCFE"
+
+  # 代码段阴影
+  # 其他阴影参考: https://getcssscan.com/css-box-shadow-examples
+  markdown_code_box_shadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px"
+
+  # 全局字体色
+  # Color of global text
+  text_color: "#3c4858"
+  text_color_dark: "#c4c6c9"
+
+  # 文章正文字体色(h1 h2 h3...)
+  # Color of Article heading (h1 h2 h3...)
+  hash_header_color: "#000"
+  hash_header_color_dark: "#c4c6c9"
+
+  # 文章超链接字体色
+  # Color of post link
+  post_link_color: "#0366d6"
+  post_link_color_dark: "#1589e9"
+
+  # 文章超链接悬浮时(被选中)字体色
+  # Color of link when hovering
+  link_hover_color: "#30a9de"
+  link_hover_color_dark: "#30a9de"
+
+  # 一级目录字体颜色
+  dir_tree_color: "#000"
+
+  # 一级目录悬浮时(被选中)字体颜色
+  dir_tree_hover_color: "#0366d6"
+
+  # 二级目录字体颜色
+  dir_second_tree_color: "#000"
+
+  # 二级目录悬浮时(被选中)字体颜色
+  dir_second_tree_hover_color: "#0366d6"
+
+  # 图片下方文字颜色(需要在options中开启)
+  picture_text_color: "#a3a1a1"
+
+  # 图片被放大后的背景颜色
+  picture_preview_bg_color: "rgba(0, 0, 0, 0.3)"
+
+# 主题字体配置
+# Font
+font:
+  font_size: 16px
+  font_family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji
+  letter_spacing: 0.02em
+
+  # 一级条目字体大小
+  dir_item_font_size: 16px
+
+  navigator_item_font_size: 14px
+
+  # 二级条目字体大小
+  dir_second_item_font_size: 14px
