@@ -8,6 +8,8 @@ Anime-WGAN-GP 是一个使用 WGAN-GP 来生成动漫头像的项目
 
 相关视频: [【项目分享】使用GAN网络生成动漫头像(附代码)](https://www.bilibili.com/video/BV1cr4y147s8)
 
+相关文档: [Anime-WGAN document](https://luzhixing12345.github.io/Anime-WGAN/)
+
 ## Requirements
 
 - python : 3.7
